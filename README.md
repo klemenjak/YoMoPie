@@ -1,4 +1,4 @@
-# YoMoPie - A Smart Metering Board for Raspberry Pi
+# Welcome to YoMoPie !
 
 The YoMo project aims to empower people using low-cost open hardware smart meters in their household.
 With YoMoPie, we provide a Smart Metering extension board for Raspberry Pi.

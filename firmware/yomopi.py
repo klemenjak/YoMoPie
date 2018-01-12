@@ -14,6 +14,8 @@ class YoMoPi:
     sampleintervall = 1
     active_factor = 1
     apparent_factor = 1
+    vrms_factor = 1
+    irms_factor = 1
     
     def __init__(self):
         self.spi=spidev.SpiDev()
@@ -31,6 +33,7 @@ class YoMoPi:
 		
     def set_lines(self, lines):
 	if (lines != 1) and (lines != 3):
+            print "Wrong number of lines"
             return
 	else:
             self.active_lines = lines
@@ -69,13 +72,15 @@ class YoMoPi:
         self.enable_board()
         register = register & self.read
         result = self.spi.xfer2([register, 0x00, 0x00])[1:]
-        return result[0]<<8+result[1]
+        dec_result = (result[0]<<8)+result[1]
+        return dec_result
         
     def read_24bit(self, register):
         self.enable_board()
         register = register & self.read
-        result = self.spi.xfer2([register, 0x00, 0x00, 0x00])[1:]        
-        return result[0]<<16+result[1]<<8+result[0]
+        result = self.spi.xfer2([register, 0x00, 0x00, 0x00])[1:]
+        dec_result = (result[0]<<16)+(result[1]<<8)+(result[0])
+        return dec_result
 
     def read_temp(self):
         reg = self.read_8bit(0x08)
@@ -103,12 +108,12 @@ class YoMoPi:
     	return
 		
     def get_sample(self):
-    	aenergy = self.read_aenergy() *self.active_factor * 3600/self.sampleintervall
-    	appenergy = self.read_appenergy() *self.apparent_factor * 3600/self.sampleintervall
+    	aenergy = self.read_aenergy() *self.active_factor
+    	appenergy = self.read_appenergy() *self.apparent_factor 
     	renergy = math.sqrt(appenergy*appenergy - aenergy*aenergy)
     	if self.debug:
     		print"Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var" % (aenergy, appenergy, renergy)
-    		print"VRMS: %f IRMS: %f" %(self.vrms(),self.irms())
+    		print"VRMS: %f IRMS: %f" %(self.vrms()*self.vrms_factor,self.irms())
     	return
 		
     def vrms(self):

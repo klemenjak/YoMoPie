@@ -1,4 +1,5 @@
 import time
+import math
 import spidev
 import sys
 import RPi.GPIO as GPIO 
@@ -7,12 +8,12 @@ class YoMoPi:
     read = 0b00111111
     write = 0b10000000
     spi=0
-	active_lines = 1
-	debug = 1
+    active_lines = 1
+    debug = 1
 	
-	sampleintervall = 1
-	active_factor = 1
-	apparent_factor = 1
+    sampleintervall = 1
+    active_factor = 1
+    apparent_factor = 1
     
     def __init__(self):
         self.spi=spidev.SpiDev()
@@ -25,23 +26,24 @@ class YoMoPi:
         self.spi.open(0,0)
         self.spi.max_speed_hz = 62500
         self.spi.mode = 0b01
-		self.set_lines(self.active_lines)
+	self.set_lines(self.active_lines)
         return 
 		
-	def set_lines(self, lines):
-		if lines != 1 && lines != 3:
-			return
-		else:
-			self.active_lines = lines
-			if self.active_lines == 3:
-				self.write_8bit(0x0D, 0x3F)
-				self.write_8bit(0x0E, 0x3F)
-				self.set_mmode(0x70)
-			elif self.active_lines == 1:
-				self.write_8bit(0x0D, 0x24)
-				self.write_8bit(0x0E, 0x24)	
-				self.set_mmode(0x10)				
-		return
+    def set_lines(self, lines):
+	if (lines != 1) and (lines != 3):
+            return
+	else:
+            self.active_lines = lines
+            if self.active_lines == 3:
+                self.write_8bit(0x0D, 0x3F)
+                self.write_8bit(0x0E, 0x3F)
+		self.set_mmode(0x70)
+            elif self.active_lines == 1:
+            		self.write_8bit(0x0D, 0x24)
+            		self.write_8bit(0x0E, 0x24)	
+            		self.set_mmode(0x10)				
+            return
+        return
 	
     def enable_board(self):
         GPIO.output(19, GPIO.HIGH)
@@ -84,52 +86,52 @@ class YoMoPi:
         aenergy = self.read_24bit(0x02)
         return aenergy
 		
-	def read_appenergy(self):
-		appenergy = self.read_24bit(0x05)
-		return appenergy
+    def read_appenergy(self):
+    	appenergy = self.read_24bit(0x05)
+    	return appenergy
     
     def read_period(self):
         period = self.read_16bit(0x07)
         return period
 		
-	def set_opmode(self, value):
-		self.write_8bit([0x0A, value])
-		return
+    def set_opmode(self, value):
+    	self.write_8bit(0x0A, value)
+    	return
 
-	def set_mmode(self, value):
-		self.write_8bit([0x0B, value])
-		return
+    def set_mmode(self, value):
+    	self.write_8bit(0x0B, value)
+    	return
 		
-	def get_sample(self):
-		aenergy = self.read_aenergy() *self.active_factor * 3600/self.sampleintervall
-		appenergy = self.read_appenergy() *self.apparent_factor * 3600/self.sampleintervall
-		renergy = sqrt(appenergy*appenergy - aenergy*aenergy)
-		if debug:
-			print "Active energy: " + str(aenergy) + " W, Apparent energy: " + str(appenergy) + " VA, Reactive Energy: " + renergy + " var"
-			print "VRMS: " str(self.vrms) + " IRMS: " + str(self.irms)
-		return
+    def get_sample(self):
+    	aenergy = self.read_aenergy() *self.active_factor * 3600/self.sampleintervall
+    	appenergy = self.read_appenergy() *self.apparent_factor * 3600/self.sampleintervall
+    	renergy = math.sqrt(appenergy*appenergy - aenergy*aenergy)
+    	if self.debug:
+    		print"Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var" % (aenergy, appenergy, renergy)
+    		print"VRMS: %f IRMS: %f" %(self.vrms(),self.irms())
+    	return
 		
-	def vrms(self):
-		if self.active_lines == 1:
-			avrms = self.read_24bit(0x2C)
-			return avrms
-		elif self.active_lines == 3:
-			vrms[0] = self.read_24bit(0x2C)
-			vrms[1] = self.read_24bit(0x2D)
-			vrms[2] = self.read_24bit(0x2E)
-			return vrms
-		return 0
+    def vrms(self):
+    	if self.active_lines == 1:
+    		avrms = self.read_24bit(0x2C)
+    		return avrms
+    	elif self.active_lines == 3:
+    		vrms[0] = self.read_24bit(0x2C)
+    		vrms[1] = self.read_24bit(0x2D)
+    		vrms[2] = self.read_24bit(0x2E)
+    		return vrms
+    	return 0
 		
-	def irms(self):
-		if self.active_lines == 1:
-			airms = self.read_24bit(0x29)
-			return airms
-		elif self.active_lines == 3:
-			irms[0] = self.read_24bit(0x29)
-			irms[1] = self.read_24bit(0x2A)
-			irms[2] = self.read_24bit(0x2B)
-			return vrms
-		return 0
+    def irms(self):
+    	if self.active_lines == 1:
+    		airms = self.read_24bit(0x29)
+    		return airms
+    	elif self.active_lines == 3:
+    		irms[0] = self.read_24bit(0x29)
+    		irms[1] = self.read_24bit(0x2A)
+    		irms[2] = self.read_24bit(0x2B)
+    		return vrms
+    	return 0
 		
     def close(self):
         self.spi.close()

@@ -28,6 +28,12 @@ class YoMoPi:
     def disable_board(self):
         GPIO.output(19, GPIO.LOW)
         return
+    
+    def write_8bit(self, register, value):
+        self.enable_board()
+        register = register | self.write
+        self.spi.xfer2([register, value])
+        return
 
     def read_8bit(self, register):
         self.enable_board()
@@ -49,16 +55,18 @@ class YoMoPi:
 
     def read_temp(self):
         reg = self.read_8bit(0x08)
-        temp = reg[0]
-        if temp > 127:
-            return (temp-1)^0xFF
-        else:
-            return temp
-        
+        temp = (reg[0]-129)/4
+        return temp
+    
     def read_aenergy(self):
         reg = self.read_24bit(0x02)
         aenergy = reg[0]<<16+reg[1]<<8+reg[2]
         return aenergy
+    
+    def read_period(self):
+        reg = self.read_16bit(0x07)
+        period = reg[0]<<8 + reg[1]
+        return period
 
     def close(self):
         self.spi.close()

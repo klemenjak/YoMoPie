@@ -61,38 +61,35 @@ class YoMoPi:
         self.enable_board()
         register = register & self.read
         result = self.spi.xfer2([register, 0x00])[1:]        
-        return result
+        return result[0]
         
     def read_16bit(self, register):
         self.enable_board()
         register = register & self.read
-        result = self.spi.xfer2([register, 0x00, 0x00])[1:]        
-        return result
+        result = self.spi.xfer2([register, 0x00, 0x00])[1:]
+        return result[0]<<8+result[1]
         
     def read_24bit(self, register):
         self.enable_board()
         register = register & self.read
         result = self.spi.xfer2([register, 0x00, 0x00, 0x00])[1:]        
-        return result
+        return result[0]<<16+result[1]<<8+result[0]
 
     def read_temp(self):
         reg = self.read_8bit(0x08)
-        temp = (reg[0]-129)/4
+        temp = (reg-129)/4
         return temp
     
     def read_aenergy(self):
-        reg = self.read_24bit(0x02)
-        aenergy = reg[0]<<16+reg[1]<<8+reg[2]
+        aenergy = self.read_24bit(0x02)
         return aenergy
 		
 	def read_appenergy(self):
-		reg = self.read_24bit(0x05)
-		appenergy = reg[0]<<16+reg[1]<<8+reg[2]
+		appenergy = self.read_24bit(0x05)
 		return appenergy
     
     def read_period(self):
-        reg = self.read_16bit(0x07)
-        period = reg[0]<<8 + reg[1]
+        period = self.read_16bit(0x07)
         return period
 		
 	def set_opmode(self, value):

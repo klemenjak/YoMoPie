@@ -88,12 +88,13 @@ irms_factor = 1
 In this section every method from the library is listed and you will find a detailed description on the parameters and returns of each function. For more information you will also find the full source code of the function.
 \subsection{__init__}
 
-\begin{lstlisting}
+
 \textbf{Description}: This is the constructor and it creates a new YoMoPi object. It also creates a new SPI objects for each YoMoPi object.
 
 \textbf{Parameters}: None.
 
 \textbf{Returns}: Nothing.
+\begin{lstlisting}
 def __init__(self):
        self.spi=spidev.SpiDev()
        return 

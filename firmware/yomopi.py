@@ -1,5 +1,4 @@
 import time
-import datetime
 import math
 import spidev
 import sys

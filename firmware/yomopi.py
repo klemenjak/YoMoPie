@@ -1,4 +1,5 @@
 import time
+import datetime
 import math
 import spidev
 import sys
@@ -82,21 +83,21 @@ class YoMoPi:
         dec_result = (result[0]<<16)+(result[1]<<8)+(result[0])
         return dec_result
 
-    def read_temp(self):
+    def get_temp(self):
         reg = self.read_8bit(0x08)
-        temp = (reg-129)/4
+        temp = [time.time(),(reg-129)/4]
         return temp
     
-    def read_aenergy(self):
-        aenergy = self.read_24bit(0x02)
+    def get_aenergy(self):
+        aenergy = [time.time(), self.read_24bit(0x02)]
         return aenergy
 		
-    def read_appenergy(self):
-    	appenergy = self.read_24bit(0x05)
+    def get_appenergy(self):
+    	appenergy = [time.time(), self.read_24bit(0x05)]
     	return appenergy
     
-    def read_period(self):
-        period = self.read_16bit(0x07)
+    def get_period(self):
+        period = [time.time(), self.read_16bit(0x07)]
         return period
 		
     def set_opmode(self, value):
@@ -108,36 +109,62 @@ class YoMoPi:
     	return
 		
     def get_sample(self):
-    	aenergy = self.read_aenergy() *self.active_factor
-    	appenergy = self.read_appenergy() *self.apparent_factor 
+    	aenergy = self.get_aenergy()[1] *self.active_factor
+    	appenergy = self.get_appenergy()[1] *self.apparent_factor 
     	renergy = math.sqrt(appenergy*appenergy - aenergy*aenergy)
     	if self.debug:
     		print"Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var" % (aenergy, appenergy, renergy)
-    		print"VRMS: %f IRMS: %f" %(self.vrms()*self.vrms_factor,self.irms())
-    	return
+    		print"VRMS: %f IRMS: %f" %(self.get_vrms()[1]*self.vrms_factor,self.get_irms()[1]*self.irms_factor)
+    	sample = []
+    	sample.append(time.time())
+    	sample.append(aenergy)
+    	sample.append(appenergy)
+    	sample.append(renergy)
+    	sample.append(self.get_period()[1])
+    	sample.append(self.get_vrms()[1]*self.vrms_factor)
+    	sample.append(self.get_irms()[1]*self.irms_factor)
+    	return sample
 		
-    def vrms(self):
+    def get_vrms(self):
     	if self.active_lines == 1:
-    		avrms = self.read_24bit(0x2C)
+    		avrms = [time.time(), self.read_24bit(0x2C)]
     		return avrms
     	elif self.active_lines == 3:
-    		vrms[0] = self.read_24bit(0x2C)
-    		vrms[1] = self.read_24bit(0x2D)
-    		vrms[2] = self.read_24bit(0x2E)
+                vrms = []
+                vrms.append(time.time())
+    		vrms.append(self.read_24bit(0x2C))
+    		vrms.append(self.read_24bit(0x2D))
+    		vrms.append(self.read_24bit(0x2E))
     		return vrms
     	return 0
 		
-    def irms(self):
+    def get_irms(self):
     	if self.active_lines == 1:
-    		airms = self.read_24bit(0x29)
+    		airms = [time.time(), self.read_24bit(0x29)]
     		return airms
     	elif self.active_lines == 3:
-    		irms[0] = self.read_24bit(0x29)
-    		irms[1] = self.read_24bit(0x2A)
-    		irms[2] = self.read_24bit(0x2B)
+                irms = []
+                irms.append(time.time())
+    		irms.append(self.read_24bit(0x29))
+    		irms.append(self.read_24bit(0x2A))
+    		irms.append(self.read_24bit(0x2B))
     		return vrms
     	return 0
 		
+	
+    def start_sampling(self, nr_samples, samplerate):
+        if (samplerate<1) or (nr_samples<1):
+            return 0
+        self.sampleintervall = samplerate
+        samples = []
+        for i in range(0, nr_samples):
+            
+            for j in range(0, samplerate):
+                time.sleep(1)
+                
+            samples.append(self.get_sample())     
+        return samples
+    
     def close(self):
         self.spi.close()
         return

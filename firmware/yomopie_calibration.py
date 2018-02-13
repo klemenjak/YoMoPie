@@ -6,6 +6,8 @@ yomo = YoMoPie.YoMoPie()
 
 yomo.set_lines(1)
 
-print yomo.do_n_measurements(5, 1)
+while True:
+    yomo.get_sample()
+    time.sleep(1)
         
 yomo.close()    

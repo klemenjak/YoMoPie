@@ -9,7 +9,7 @@ class YoMoPie:
     read = 0b00111111
     write = 0b10000000
     spi=0
-	radio =0
+    radio =0
     active_lines = 1
     debug = 1
 
@@ -23,11 +23,11 @@ class YoMoPie:
 	
     def __init__(self):
         self.spi=spidev.SpiDev()
-		try:
-			self.init_yomopie()
-		except Error as err:
-			print("Unexpected error:", format(err.args))
-			return 0
+        try:
+            self.init_yomopie()
+        except Error as err:
+            print("Unexpected error:", format(err.args))
+            return 0
         return
 
     def init_yomopie(self):
@@ -45,7 +45,7 @@ class YoMoPie:
             print "Wrong number of lines"
             return
 	else:
-        self.active_lines = lines
+            self.active_lines = lines
         if self.active_lines == 3:
                 self.write_8bit(0x0D, 0x3F)
                 self.write_8bit(0x0E, 0x3F)
@@ -157,6 +157,25 @@ class YoMoPie:
     		irms.append(self.read_24bit(0x2B))
     		return vrms
     	return 0
+    
+    def get_sampleperperiod(self, samplerate):
+    	aenergy = self.get_aenergy()[1] *self.active_factor * samplerate/3600
+    	appenergy = self.get_appenergy()[1] *self.apparent_factor * samplerate/3600
+    	renergy = math.sqrt(appenergy*appenergy - aenergy*aenergy)
+    	vrms = self.get_vrms()[1]*self.vrms_factor* samplerate/3600
+    	irms = self.get_irms()[1]*self.irms_factor* samplerate/3600
+    	if self.debug:
+    		print"Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var" % (aenergy, appenergy, renergy)
+    		print"VRMS: %f IRMS: %f" %(vrms,irms)
+    	sample = []
+    	sample.append(time.time())
+    	sample.append(aenergy)
+    	sample.append(appenergy)
+    	sample.append(renergy)
+    	sample.append(self.get_period()[1])
+    	sample.append(vrms)
+    	sample.append(irms)
+    	return sample
 
     def do_n_measurements(self, nr_samples, samplerate):
         if (samplerate<1) or (nr_samples<1):
@@ -166,26 +185,26 @@ class YoMoPie:
         for i in range(0, nr_samples):
             for j in range(0, samplerate):
                 time.sleep(1)
-            sample = self.get_sample()
-			samples.append(sample)
-			logfile = open("samples.log", "a")
-			for value in sample:
-				logfile.write("%s, " % value)
-			logfile.write("\n")
-			logfile.close()
+            sample = self.get_sampleperperiod(samplerate)
+	    samples.append(sample)
+	    logfile = open("samples.log", "a")
+            for value in sample:
+		logfile.write("%s; " % value)
+	    logfile.write("\n")
+            logfile.close()
         return samples
 		
-	def change_factors(self, apparent_f, vrms_f, irms_f):
-		self.apparent_factor = apparent_f
-		self.vrms_factor = vrms_f
-		self.irms_factor = irms_f
-		return
+    def change_factors(self, apparent_f, vrms_f, irms_f):
+	self.apparent_factor = apparent_f
+	self.vrms_factor = vrms_f
+	self.irms_factor = irms_f
+	return
 		
-	def reset_factors(self):
-		self.apparent_factor = 1
-		self.vrms_factor = 1
-		self.irms_factor = 1
-		return
+    def reset_factors(self):
+	self.apparent_factor = 1
+	self.vrms_factor = 1
+	self.irms_factor = 1
+	return
 
     def close(self):
         self.spi.close()
@@ -194,57 +213,56 @@ class YoMoPie:
 		
 	#NRF24 communication
 
-	def init_nrf24(self):
-		pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]
+    def init_nrf24(self):
+	pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]
 
-		self.radio = NRF24(GPIO, self.spi)
-		self.radio.begin(1, 13)
-		self.radio.setPayloadSize(32)
-		self.radio.setChannel(0x60)
+	self.radio = NRF24(GPIO, self.spi)
+	self.radio.begin(1, 13)
+	self.radio.setPayloadSize(32)
+	self.radio.setChannel(0x60)
 
-		self.radio.setDataRate(NRF24.BR_2MBPS)
-		self.radio.setPALevel(NRF24.PA_MIN)
-		self.radio.setAutoAck(True)
-		self.radio.enableDynamicPayloads()
-		self.radio.enableAckPayload()
+	self.radio.setDataRate(NRF24.BR_2MBPS)
+	self.radio.setPALevel(NRF24.PA_MIN)
+	self.radio.setAutoAck(True)
+	self.radio.enableDynamicPayloads()
+	self.radio.enableAckPayload()
+	self.radio.openWritingPipe(pipes[1])
+	self.radio.openReadingPipe(1, pipes[0])
+	self.radio.printDetails()
+	return
 
-		self.radio.openWritingPipe(pipes[1])
-		self.radio.openReadingPipe(1, pipes[0])
-		self.radio.printDetails()
-		return
-
-	def write_nrf24(self, command):	
-		message = []
-		message = list(command)
-		self.radio.write(message)
-		print("Send: {}".format(message))
+    def write_nrf24(self, command):	
+	message = []
+	message = list(command)
+	self.radio.write(message)
+	print("Send: {}".format(message))
 		
-		if self.radio.isAckPayloadAvailable():
-			pl_buffer = []
-			self.radio.read(pl_buffer, self.radio.getDynamicPayloadSize())
-			print(pl_buffer)
-			print("Translating the acknowledgment to unicode chars...")
-			string = ""
-			for n in pl_buffer:
-				if((n >= 32 and n <= 126):
-					string += chr(n)
-			print(string)
-		return
+	if self.radio.isAckPayloadAvailable():
+            pl_buffer = []
+            self.radio.read(pl_buffer, self.radio.getDynamicPayloadSize())
+            print(pl_buffer)
+            print("Translating the acknowledgment to unicode chars...")
+            string = ""
+            for n in pl_buffer:
+		if(n >= 32 and n <= 126):
+                    string += chr(n)
+		print(string)
+	return
 		
-	def read_nrf24(self):
-		print("Ready to receive data...")
-		self.radio.startListening()
-		pipe = [0]
-		while not self.radio.available(pipe):
-			time.sleep(1/100)
-		receivedMessage = []
-		self.radio.read(receivedMessage, self.radio.getDynamicPayloadSize())
+    def read_nrf24(self):
+	print("Ready to receive data...")
+	self.radio.startListening()
+	pipe = [0]
+	while not self.radio.available(pipe):
+            time.sleep(1/100)
+	receivedMessage = []
+	self.radio.read(receivedMessage, self.radio.getDynamicPayloadSize())
 		
-		print("Translating the receivedMessage to unicode chars...")
-		string = ""
-		for n in receivedMessage:
-			if (n >= 32 and n <= 126):
-				string += chr(n)
-		print("Our sensor sent us: {}".format(string))
-		self.radio.stopListening()
-		return
+	print("Translating the receivedMessage to unicode chars...")
+	string = ""
+	for n in receivedMessage:
+            if (n >= 32 and n <= 126):
+                string += chr(n)
+            print("Our sensor sent us: {}".format(string))
+        self.radio.stopListening()
+	return

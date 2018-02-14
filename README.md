@@ -18,7 +18,7 @@ The YoMoPie builds [on the work published in [1]](https://link.springer.com/arti
 |Arduino-based| yes   | no  |
 |Costs|€65|  |
 
-##Imports
+## Imports
 Following imports were needed for this library.
 
 **time**: time was needed to get the timestamp on each value.
@@ -39,7 +39,7 @@ import sys
 import RPi.GPIO as GPIO 
 ```
  
-##Classvariables
+## Classvariables
 
 Following variable were needed to correcty access the register and to adjust the register values to usefull values. 
 
@@ -62,10 +62,10 @@ vrms_factor = 1
 irms_factor = 1
 ```
     
-##Methods
+## Methods
 
 In this section every method from the library is listed and you will find a detailed description on the parameters and returns of each function. For more information you will also find the full source code of the function.
-###__init__
+## #__init__
 
 
 **Description**: This is the constructor and it creates a new YoMoPi object. It also creates a new SPI objects for each YoMoPi object.
@@ -79,7 +79,7 @@ def __init__(self):
        return 
 ```
  
-###init_yomopi
+## #init_yomopi
 
 **Description**: Initializes the YoMoPi object. Sets the GPIO mode, disables GPIO warnings and defines pin 19 as output. Also opens a new SPI connection via the SPI device (0,0), sets the SPI speed to 62500 Hz and sets the SPI mode to 1. Finaly the function set_lines is called to set the MMODE, WATMODE and VAMODE.
 
@@ -99,7 +99,7 @@ def init_yomopi(self):
        return 
 ```
 		
-###set_lines
+## #set_lines
 
 **Description**: This function sets the number of active phases that will be measured.
 
@@ -125,7 +125,7 @@ def set_lines(self, lines):
 	return
 ```
 
-###enable_board
+## #enable_board
 
 **Description**: Enables the board by pulling pin 19 into the HIGH state.
 
@@ -139,7 +139,7 @@ def enable_board(self):
 	return
 ```
 
-###disable_board
+## #disable_board
 
 **Description**: Disables the board by pulling pin 19 into the LOW state.
 
@@ -153,7 +153,7 @@ def disable_board(self):
        return
 ```
 
-###write_8bit    
+## #write_8bit    
 
 **Description**: Writes 8 bit of data to the given address.
 
@@ -171,7 +171,7 @@ def write_8bit(self, register, value):
        return
 ```
 
-###read_8bit
+## #read_8bit
 
 **Description**: Reads 8 bit of data from the given address.
 
@@ -187,7 +187,7 @@ def read_8bit(self, register):
        return result[0]
 ```
  
-###read_16bit  
+## #read_16bit  
 
 **Description**: Reads 16 bit of data from the given address.
 
@@ -204,7 +204,7 @@ def read_16bit(self, register):
        return dec_result
 ```
 
-###read_24bit        
+## #read_24bit        
 
 **Description**: Reads 24 bit of data from the given address.
 
@@ -221,7 +221,7 @@ def read_24bit(self, register):
        return dec_result
 ```
 
-###get_temp
+## #get_temp
 
 **Description**: Reads 8 bit of data from the temperature register (0x08).
 
@@ -236,7 +236,7 @@ def get_temp(self):
        return temp
 ```
     
-###get_aenergy
+## #get_aenergy
 
 **Description**: Reads 24 bit of data from the active ernergy register (0x02) and resets the register to 0.
 
@@ -250,7 +250,7 @@ def get_aenergy(self):
        return aenergy
 ```
 
-###get_appenergy	
+## #get_appenergy	
 
 **Description**: Reads 24 bit of data from the apparent ernergy register (0x05) and resets the register to 0.
 
@@ -263,7 +263,7 @@ def get_appenergy(self):
     	return appenergy
 ```
  
-###get_period   
+## #get_period   
 
 **Description**: Reads 16 bit of data from the period register (0x07).
 
@@ -276,7 +276,7 @@ def get_period(self):
        return period
 ```
 		
-###set_opmode
+## #set_opmode
 
 **Description**: Sets the OPMODE. For more information to the OPMODE see section OPMODE.
 
@@ -290,7 +290,7 @@ def set_opmode(self, value):
     	return
 ```
 
-###set_mmode
+## #set_mmode
 
 **Description**: Sets the MMODE. For more information to the MMODE see section MMODE.
 
@@ -304,7 +304,7 @@ def set_mmode(self, value):
     	return
 ```
 
-###get_sample	
+## #get_sample	
 
 **Description**: Takes one sample and calculates the active energy, apparent energy, reactive energy, VRMS and IRMS. The calculated values are the real values. (after adjusting with their factores)
 
@@ -333,7 +333,7 @@ def get_sample(self):
     	return sample
 ```
 		
-###get_vrms
+## #get_vrms
 
 **Description**: Reads the VRMS register depending on if the active lines is 1 or 3.
 
@@ -356,7 +356,7 @@ def get_vrms(self):
 	return 0
 ```
 		
-###get_irms
+## #get_irms
 
 **Description**: Reads the IRMS register depending on if the active lines is 1 or 3.
 
@@ -379,7 +379,7 @@ def get_irms(self):
     	return 0
 ```
 		
-###start_sampling	
+## #start_sampling	
 
 **Description**: Starts a sampling programm that takes a number of samples depending on the parameters.
 
@@ -403,7 +403,7 @@ def start_sampling(self, nr_samples, samplerate):
 	return samples
 ```
     
-###close
+## #close
 
 **Description**: Closes the SPI connection.
 
@@ -417,16 +417,16 @@ def close(self):
 	return
 ```
 
-##OPMODE
+## OPMODE
 The general configuration of the ADE7754 is defined by writing to the OPMODE register (0x0A).
 
 
 
-##MMODE
+## MMODE
 The configuration of the period and peak measurements made by the ADE7754 are defined by writing to the MMODE register (0x0B).
 
 
-##Examples
+## Examples
 To use the YoMoPi library you first need to import the library.
 
 ```

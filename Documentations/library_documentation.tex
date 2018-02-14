@@ -456,6 +456,29 @@ The configuration of the period and peak measurements made by the ADE7754 are de
 \caption{MMODE}\label{fig:myFigure2}
 \end{figure}
 
+\section{Examples}
+To use the YoMoPi library you first need to import the library.
+
+\begin{lstlisting}
+import yomopi
+\end{lstlisting}
+
+When the library is correcty imported you can create a new YoMoPi object and initialize is with the init_yomopi function.
+\begin{lstlisting}
+yomo = yomopi.YoMoPi()
+yomo.init_yomopi()
+\end{lstlisting}
+
+To test the implementation we start a short sampling. Therefor we call the start_sampling function with 5 samples and a delay of 1 second between each sample.
+\begin{lstlisting}
+yomo.start_sampling(5, 1)
+\end{lstlisting}
+
+If you want to switch the measurement to one phase change the line like this.
+\begin{lstlisting}
+yomo.set_lines(1)
+\end{lstlisting}
+
 \newpage
 \listoffigures
 

@@ -11,7 +11,7 @@ The YoMoPie builds [on the work published in [1]](https://link.springer.com/arti
 **[Imports](#imports)**<br>
 **[Classvariables](#classvariables)**<br>
 **[Methods](#methods)**<br>
-*[__init__](#__init__)*<br>
+*[init](#init)*<br>
 *[init_yomopi](#init_yomopi)*<br>
 *[set_lines](#set_lines)*<br>
 *[enable_board](#enable_board)*<br>
@@ -212,7 +212,7 @@ def write_8bit(self, register, value):
 ```python
 def read_8bit(self, register):
        self.enable_board()
-       register = register \& self.read
+       register = register & self.read
        result = self.spi.xfer2([register, 0x00])[1:]        
        return result[0]
 ```
@@ -228,7 +228,7 @@ def read_8bit(self, register):
 ```python
 def read_16bit(self, register):
        self.enable_board()
-       register = register \& self.read
+       register = register & self.read
        result = self.spi.xfer2([register, 0x00, 0x00])[1:]
        dec_result = (result[0]<<8)+result[1]
        return dec_result
@@ -245,7 +245,7 @@ def read_16bit(self, register):
 ```python
 def read_24bit(self, register):
        self.enable_board()
-       register = register \& self.read
+       register = register & self.read
        result = self.spi.xfer2([register, 0x00, 0x00, 0x00])[1:]
        dec_result = (result[0]<<16)+(result[1]<<8)+(result[0])
        return dec_result

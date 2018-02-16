@@ -28,7 +28,7 @@ class YoMoPie:
         self.spi.open(0,0)
         self.spi.max_speed_hz = 62500
         self.spi.mode = 0b01
-	self.set_lines(self.active_lines)
+        self.set_lines(self.active_lines)
         return
 
     def set_lines(self, lines):
@@ -36,16 +36,15 @@ class YoMoPie:
             print "Wrong number of lines"
             return
 	else:
-            self.active_lines = lines
-            if self.active_lines == 3:
+        self.active_lines = lines
+        if self.active_lines == 3:
                 self.write_8bit(0x0D, 0x3F)
                 self.write_8bit(0x0E, 0x3F)
 		self.set_mmode(0x70)
-            elif self.active_lines == 1:
-            		self.write_8bit(0x0D, 0x24)
-            		self.write_8bit(0x0E, 0x24)
-            		self.set_mmode(0x10)
-            return
+        elif self.active_lines == 1:
+            self.write_8bit(0x0D, 0x24)
+            self.write_8bit(0x0E, 0x24)
+            self.set_mmode(0x10)
         return
 
     def enable_board(self):
@@ -150,20 +149,17 @@ class YoMoPie:
     		return vrms
     	return 0
 
-
     def start_sampling(self, nr_samples, samplerate):
         if (samplerate<1) or (nr_samples<1):
             return 0
         self.sampleintervall = samplerate
         samples = []
         for i in range(0, nr_samples):
-
             for j in range(0, samplerate):
                 time.sleep(1)
-
             samples.append(self.get_sample())
         return samples
 
     def close(self):
         self.spi.close()
-        return
+        return 0

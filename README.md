@@ -1,13 +1,27 @@
 # Welcome to YoMoPie !
 
 The YoMo project aims to empower people using low-cost open hardware smart meters in their household.
-With YoMoPie, we provide a Smart Metering extension board for Raspberry Pi.
+With YoMoPie, we provide a Smart Metering extension board for Raspberry Pi. YomoPie comes with a Python library that allows users to easily control
+and apply this special Smart Metering board.
 
 The YoMoPie builds [on the work published in [1]](https://link.springer.com/article/10.1007%2Fs00450-014-0290-8#/page-1). The board integrates several sensors such as an energy metering IC, a relay to control connected loads, and an interface for RF communication.
 
+## General Information
 
+|         | YoMo v1           | YoMoPie  |
+| ------------- |:-------------:| -----:|
+|Communication| WiFi | WiFi, Ethernet, RF |
+|Measurement| P,Q,S,I,V,E | P,Q,S,I,V,E |
+|Number of connections| 1 | 1 (3 planned) |
+|Switchable| yes | yes |
+|Sampling frequency| 1Hz | 1 Hz |
+|Power calculation| Hardware | Hardware |
+|Open-Source| yes | yes |
+|Arduino-based| yes   | no  |
+|Costs|€65|  |
+
+# YomoPie Python package documentation
 ## Table of Contents
-**[General Information](#general-information)**<br>
 **[Imports](#imports)**<br>
 **[Classvariables](#classvariables)**<br>
 **[Methods](#methods)**<br>
@@ -35,64 +49,53 @@ The YoMoPie builds [on the work published in [1]](https://link.springer.com/arti
 **[MMODE](#mmode)**<br>
 **[Examples](#examples)**<br>
 
-## General Information
 
-|         | YoMo v1           | YoMoPie  |
-| ------------- |:-------------:| -----:|
-|Communication| WiFi | WiFi, Ethernet, RF |
-|Measurement| P,Q,S,I,V,E | P,Q,S,I,V,E |
-|Number of connections| 1 | 1 (3 planned) |
-|Switchable| yes | yes |
-|Sampling frequency| 1Hz | 1 Hz |
-|Power calculation| Hardware | Hardware |
-|Open-Source| yes | yes |
-|Arduino-based| yes   | no  |
-|Costs|€65|  |
 
 ## Imports
-Following imports were needed for this library.
+YomoPie requires some additional libraries:
 
-**time**: time was needed to get the timestamp on each value.
+**time**: The time package is required to obtain timestaps.
 
-**math**: math was needed to calculate the squareroot for the reactive energy.
+**math**: YoMoPie requires the math lib for calculations such as reactive energy.
 
-**spidev**: the spidev module was needed to use the SPI on the Raspberry Pi
+**spidev**: The YoMoPie integrates an energy monitor IC, which communicates via SPI to the RPi. To enable this communication, YoMoPie exploits the spidev lib.
 
-**sys**: 
+**sys**:
 
-**RPi.GPIO**: the RPi.GPIO was needed to controll the GPIO pins for the reset pin and further extentions
+**RPi.GPIO**: In order to allow further extensions of the YoMoPie eco system, our package integrates the RPi.GPIO. Also, the reset pin is controlled via GPIO.
 
 ```python
 import time
 import math
 import spidev
 import sys
-import RPi.GPIO as GPIO 
+import RPi.GPIO as GPIO
 ```
- 
-## Classvariables
+## Class variables
 
-Following variable were needed to correcty access the register and to adjust the register values to usefull values. 
+To correctly access the internal registers of the energy monitor IC, several custom variables are required to adjust the register values.
 
-**read** and **write**: the read and write were needed to mask the register address to not accidently write the register instead of reading it. Therefor to read a register the given address will be bitwise AND masked with the \textbf{read} variable and to write a register the address will be bitwise OR masked with the \textbf{write} variable.
+**read** and **write**: These variables hold the mask that defines the operational mode. Therefore, for reading a register the given address and the **read** variable are the inputs of a bitwise AND operation. On the other hand, for writing to a register the register address and the **write** variable are the inputs of a bitwise OR operation.
 
-**spi**, **active_lines** and **debug**: this variables were used to save the spi object, to save the number of actives phases that will be measured and to enable debugging via the console.
+**spi**, **active_lines** and **debug**: These variables hold the SPI object, save the number of active lines, and enable/disable the debug mode.
 
-**sampleintervall**, **active_factor**, **apparent_factor**, **vrms_factor** and **irms_factor**: the sampleintervall defines the time between each sample when the start_sampling method is called. The minimum time between each sample is 1 second. Sampleintervall defines the number of seconds and can take each integer value greater then 0. The different factor variables will adjust the values read from the registers. This factors can be changes but should not be changed because they are calibrated values.
+* **sample interval** defines the time between two samples (with respect to the start_sampling method) in seconds
+* **active_factor**, **apparent_factor**, **vrms_factor** and **irms_factor**: Convert register values to physical quantities and represent permanent conversion factors.
+
 ```python
 read = 0b00111111
 write = 0b10000000
 spi=0
 active_lines = 1
 debug = 1
-	
+
 sampleintervall = 1
 active_factor = 1
 apparent_factor = 1
 vrms_factor = 1
 irms_factor = 1
 ```
-    
+
 ## Methods
 
 In this section every method from the library is listed and you will find a detailed description on the parameters and returns of each function. For more information you will also find the full source code of the function.
@@ -107,9 +110,9 @@ In this section every method from the library is listed and you will find a deta
 ```python
 def __init__(self):
        self.spi=spidev.SpiDev()
-       return 
+       return
 ```
- 
+
 ### init_yomopi
 
 **Description**: Initializes the YoMoPi object. Sets the GPIO mode, disables GPIO warnings and defines pin 19 as output. Also opens a new SPI connection via the SPI device (0,0), sets the SPI speed to 62500 Hz and sets the SPI mode to 1. Finaly the function set_lines is called to set the MMODE, WATMODE and VAMODE.
@@ -127,9 +130,9 @@ def init_yomopi(self):
        self.spi.max_speed_hz = 62500
        self.spi.mode = 0b01
 	self.set_lines(self.active_lines)
-       return 
+       return
 ```
-		
+
 ### set_lines
 
 **Description**: This function sets the number of active phases that will be measured.
@@ -150,7 +153,7 @@ def set_lines(self, lines):
 			self.set_mmode(0x70)
             	elif self.active_lines == 1:
             		self.write_8bit(0x0D, 0x24)
-            		self.write_8bit(0x0E, 0x24)	
+            		self.write_8bit(0x0E, 0x24)
             		self.set_mmode(0x10)				
 		return
 	return
@@ -216,7 +219,7 @@ def read_8bit(self, register):
        result = self.spi.xfer2([register, 0x00])[1:]        
        return result[0]
 ```
- 
+
 ### read_16bit  
 
 **Description**: Reads 16 bit of data from the given address.
@@ -224,7 +227,7 @@ def read_8bit(self, register):
 **Parameters**: register - 8 bit address of the register (see ADE7754 register table)
 
 **Returns**: the 16 bit of data in the register as decimal
-  
+
 ```python
 def read_16bit(self, register):
        self.enable_board()
@@ -265,7 +268,7 @@ def get_temp(self):
        temp = [time.time(),(reg-129)/4]
        return temp
 ```
-    
+
 ### get_aenergy
 
 **Description**: Reads 24 bit of data from the active ernergy register (0x02) and resets the register to 0.
@@ -280,7 +283,7 @@ def get_aenergy(self):
        return aenergy
 ```
 
-### get_appenergy	
+### get_appenergy
 
 **Description**: Reads 24 bit of data from the apparent ernergy register (0x05) and resets the register to 0.
 
@@ -293,7 +296,7 @@ def get_appenergy(self):
 	appenergy = [time.time(), self.read_24bit(0x05)]
     	return appenergy
 ```
- 
+
 ### get_period   
 
 **Description**: Reads 16 bit of data from the period register (0x07).
@@ -307,7 +310,7 @@ def get_period(self):
        period = [time.time(), self.read_16bit(0x07)]
        return period
 ```
-		
+
 ### set_opmode
 
 **Description**: Sets the OPMODE. For more information to the OPMODE see section OPMODE.
@@ -336,7 +339,7 @@ def set_mmode(self, value):
     	return
 ```
 
-### get_sample	
+### get_sample
 
 **Description**: Takes one sample and calculates the active energy, apparent energy, reactive energy, VRMS and IRMS. The calculated values are the real values. (after adjusting with their factores)
 
@@ -347,12 +350,12 @@ def set_mmode(self, value):
 ```python
 def get_sample(self):
     	aenergy = self.get_aenergy()[1] *self.active_factor
-    	appenergy = self.get_appenergy()[1] *self.apparent_factor 
+    	appenergy = self.get_appenergy()[1] *self.apparent_factor
     	renergy = math.sqrt(appenergy*appenergy - aenergy*aenergy)
     	if self.debug:
-    		print"Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var" 
+    		print"Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var"
 		% (aenergy, appenergy, renergy)
-    		print"VRMS: %f IRMS: %f" 
+    		print"VRMS: %f IRMS: %f"
 		%(self.get_vrms()[1]*self.vrms_factor,self.get_irms()[1]*self.irms_factor)
     	sample = []
     	sample.append(time.time())
@@ -364,7 +367,7 @@ def get_sample(self):
     	sample.append(self.get_irms()[1]*self.irms_factor)
     	return sample
 ```
-		
+
 ### get_vrms
 
 **Description**: Reads the VRMS register depending on if the active lines is 1 or 3.
@@ -387,7 +390,7 @@ def get_vrms(self):
     		return vrms
 	return 0
 ```
-		
+
 ### get_irms
 
 **Description**: Reads the IRMS register depending on if the active lines is 1 or 3.
@@ -410,8 +413,8 @@ def get_irms(self):
     		return vrms
     	return 0
 ```
-		
-### start_sampling	
+
+### start_sampling
 
 **Description**: Starts a sampling programm that takes a number of samples depending on the parameters.
 
@@ -427,14 +430,14 @@ def start_sampling(self, nr_samples, samplerate):
 	self.sampleintervall = samplerate
 	samples = []
 	for i in range(0, nr_samples):
-            
+
 		for j in range(0, samplerate):
 			time.sleep(1)
-                
+
 		samples.append(self.get_sample())     
 	return samples
 ```
-    
+
 ### close
 
 **Description**: Closes the SPI connection.
@@ -483,4 +486,3 @@ If you want to switch the measurement to one phase change the line like this.
 ```python
 yomo.set_lines(1)
 ```
-

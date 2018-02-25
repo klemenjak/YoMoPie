@@ -468,21 +468,21 @@ def get_irms(self):
 
 ```python
 def do_n_measurements(self, nr_samples, samplerate):
-        if (samplerate<1) or (nr_samples<1):
-            return 0
-        self.sampleintervall = samplerate
-        samples = []
-        for i in range(0, nr_samples):
-            for j in range(0, samplerate):
-                time.sleep(1)
-			sample = self.get_sample()
-			samples.append(sample)
-			logfile = open("samples.log", "a")
-			for value in sample:
-				logfile.write("%s, " % value)
-			logfile.write("\n")
-			logfile.close()
-        return samples
+	if (samplerate<1) or (nr_samples<1):
+		return 0
+	self.sampleintervall = samplerate
+	samples = []
+	for i in range(0, nr_samples):
+		for j in range(0, samplerate):
+			time.sleep(1)
+		sample = self.get_sample()
+		samples.append(sample)
+		logfile = open("samples.log", "a")
+		for value in sample:
+			logfile.write("%s, " % value)
+		logfile.write("\n")
+		logfile.close()
+	return samples
 ```
 
 ### change_factors

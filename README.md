@@ -41,7 +41,7 @@ By setting the *set_lines' variable, the user can switch between single and mult
 yomo.set_lines(1)
 ```
 
-To test the operation, we recommend to call the function *start_sampling*. Based on the number of samples and the sampling period, the function will return first measurement values:
+To test the operation, we recommend to call the function *do_n_measurements*. Based on the number of samples and the sampling period, the function will return first measurement values:
 
 ```python
 yomo.do_n_measurements(number of samples, sampling period)
@@ -168,7 +168,8 @@ def init_yomopie(self):
 
 **Description**: This function sets the number of active phases that will be measured.
 
-**Parameters**: Number of phases
+**Parameters**: 
+* lines - Number of phases
 
 **Returns**: Nothing.
 
@@ -243,7 +244,8 @@ def write_8bit(self, register, value):
 
 **Description**: Reads 8 bit of data from the given address.
 
-**Parameters**: register - 8 bit address of the register (see ADE7754 register table)
+**Parameters**: 
+* register - 8 bit address of the register (see ADE7754 register table)
 
 **Returns**: the 8 bit of data in the register as decimal
 
@@ -259,7 +261,8 @@ def read_8bit(self, register):
 
 **Description**: Reads 16 bit of data from the given address.
 
-**Parameters**: register - 8 bit address of the register (see ADE7754 register table)
+**Parameters**: 
+* register - 8 bit address of the register (see ADE7754 register table)
 
 **Returns**: the 16 bit of data in the register as decimal
 
@@ -276,7 +279,8 @@ def read_16bit(self, register):
 
 **Description**: Reads 24 bit of data from the given address.
 
-**Parameters**: register - 8 bit address of the register (see ADE7754 register table)
+**Parameters**: 
+* register - 8 bit address of the register (see ADE7754 register table)
 
 **Returns**: the 24 bit of data in the register as decimal
 
@@ -350,7 +354,8 @@ def get_period(self):
 
 **Description**: Sets the OPMODE. For more information see section OPMODE.
 
-**Parameters**: value - 8 bit of data representing the OPMODE
+**Parameters**: 
+* value - 8 bit of data representing the OPMODE
 
 **Returns**: Nothing.
 
@@ -364,7 +369,8 @@ def set_opmode(self, value):
 
 **Description**: Sets the MMODE. For more information see section MMODE.
 
-**Parameters**: value - 8 bit of data representing the MMODE
+**Parameters**: 
+* value - 8 bit of data representing the MMODE
 
 **Returns**: Nothing.
 
@@ -469,7 +475,7 @@ def do_n_measurements(self, nr_samples, samplerate):
         for i in range(0, nr_samples):
             for j in range(0, samplerate):
                 time.sleep(1)
-            sample = self.get_sample()
+			sample = self.get_sample()
 			samples.append(sample)
 			logfile = open("samples.log", "a")
 			for value in sample:

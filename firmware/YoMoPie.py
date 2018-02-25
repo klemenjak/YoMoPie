@@ -19,6 +19,11 @@ class YoMoPie:
 
     def __init__(self):
         self.spi=spidev.SpiDev()
+		try:
+			self.init_yomopie()
+		except Error as err:
+			print("Unexpected error:", format(err.args))
+			return 0
         return
 
     def init_yomopie(self):
@@ -149,7 +154,7 @@ class YoMoPie:
     		return vrms
     	return 0
 
-    def start_sampling(self, nr_samples, samplerate):
+    def do_n_measurements(self, nr_samples, samplerate):
         if (samplerate<1) or (nr_samples<1):
             return 0
         self.sampleintervall = samplerate
@@ -157,8 +162,26 @@ class YoMoPie:
         for i in range(0, nr_samples):
             for j in range(0, samplerate):
                 time.sleep(1)
-            samples.append(self.get_sample())
+            sample = self.get_sample()
+			samples.append(sample)
+			logfile = open("samples.log", "a")
+			for value in sample:
+				logfile.write("%s, " % value)
+			logfile.write("\n")
+			logfile.close()
         return samples
+		
+	def change_factors(self, apparent_f, vrms_f, irms_f):
+		self.apparent_factor = apparent_f
+		self.vrms_factor = vrms_f
+		self.irms_factor = irms_f
+		return
+		
+	def reset_factors(self):
+		self.apparent_factor = 1
+		self.vrms_factor = 1
+		self.irms_factor = 1
+		return
 
     def close(self):
         self.spi.close()

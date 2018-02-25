@@ -29,11 +29,10 @@ In order to start using YoMoPie, all the user needs to do is importing the Pytho
 import YoMoPie
 ```
 
-After a successful import, the YoMoPie object can be created and initialised by calling the *init_yomopie* function:
+After a successful import, the YoMoPie object can be created and initialised:
 
 ```python
 yomo = yomopi.YoMoPie()
-yomo.init_yomopie()
 ```
 
 By setting the *set_lines' variable, the user can switch between single and multi-phase metering mode:
@@ -45,15 +44,15 @@ yomo.set_lines(1)
 To test the operation, we recommend to call the function *start_sampling*. Based on the number of samples and the sampling period, the function will return first measurement values:
 
 ```python
-yomo.start_sampling(# samples, sampling period)
+yomo.do_n_measurements(number of samples, sampling period)
 ```
 
-# YomoPie Python package documentation
+# YoMoPie Python package documentation
 **[Imports](#imports)**<br>
 **[Classvariables](#classvariables)**<br>
 **[Methods](#methods)**<br>
 *[-init](#init)*<br>
-*[-init_yomopi](#init_yomopi)*<br>
+*[-init_yomopie](#init_yomopie)*<br>
 *[-set_lines](#set_lines)*<br>
 *[-enable_board](#enable_board)*<br>
 *[-disable_board](#disable_board)*<br>
@@ -70,7 +69,9 @@ yomo.start_sampling(# samples, sampling period)
 *[-get_sample](#get_sample)*<br>
 *[-get_vrms](#get_vrms)*<br>
 *[-get_irms](#get_irms)*<br>
-*[-start_sampling](#start_sampling)*<br>
+*[-do_n_measurements](#do_n_measurements)*<br>
+*[-change_factors](#change_factors)*<br>
+*[-reset_factors](#reset_factors)*<br>
 *[-close](#close)*<br>
 **[OPMODE](#opmode)**<br>
 **[MMODE](#mmode)**<br>
@@ -135,10 +136,15 @@ In this Section, we describe every method of our  package. A description of func
 ```python
 def __init__(self):
        self.spi=spidev.SpiDev()
-       return
+       try:
+			self.init_yomopie()
+		except Error as err:
+			print("Unexpected error:", format(err.args))
+			return 0
+        return
 ```
 
-### init_yomopi
+### init_yomopie
 
 **Description**: Initialises the YoMoPie object. Sets the GPIO mode, disables GPIO warnings and defines pin 19 as output. Also opens a new SPI connection via the SPI device (0,0), sets the SPI speed to 62500 Hz and sets the SPI mode to 1. Finally, the function set_lines is called to set the MMODE, WATMODE and VAMODE.
 
@@ -147,7 +153,7 @@ def __init__(self):
 **Returns**: Nothing.
 
 ```python
-def init_yomopi(self):
+def init_yomopie(self):
     GPIO.setmode(GPIO.BCM)
        GPIO.setwarnings(False)
        GPIO.setup(19,GPIO.OUT)
@@ -443,9 +449,9 @@ def get_irms(self):
         return 0
 ```
 
-### start_sampling
+### do_n_measurements
 
-**Description**: Takes *nr_samples* with sampling period *samplerate*.
+**Description**: Takes *nr_samples* with sampling period *samplerate* and saves the measurements into the samples.log file.
 
 **Parameters**:
 
@@ -455,19 +461,59 @@ def get_irms(self):
 **Returns**: A list of samples (each sample is a list of 7 elements)
 
 ```python
-def start_sampling(self, nr_samples, samplerate):
-    if (samplerate<1) or (nr_samples<1):
-        return 0
-    self.sampleintervall = samplerate
-    samples = []
-    for i in range(0, nr_samples):
-
-        for j in range(0, samplerate):
-            time.sleep(1)
-
-        samples.append(self.get_sample())     
-    return samples
+def do_n_measurements(self, nr_samples, samplerate):
+        if (samplerate<1) or (nr_samples<1):
+            return 0
+        self.sampleintervall = samplerate
+        samples = []
+        for i in range(0, nr_samples):
+            for j in range(0, samplerate):
+                time.sleep(1)
+            sample = self.get_sample()
+			samples.append(sample)
+			logfile = open("samples.log", "a")
+			for value in sample:
+				logfile.write("%s, " % value)
+			logfile.write("\n")
+			logfile.close()
+        return samples
 ```
+
+### change_factors
+
+**Description**: Changes the multiplication factors for the register values.
+
+**Parameters**:
+
+* apparent_f - this is the factor for the apparent energy calculation
+* vrms_f - this is the factor for the vrms calculation
+* irms_f  this is the factor for the irms calculation
+
+**Returns**: Nothing.
+
+```python
+def change_factors(self, apparent_f, vrms_f, irms_f):
+	self.apparent_factor = apparent_f
+	self.vrms_factor = vrms_f
+	self.irms_factor = irms_f
+	return
+```
+
+### reset_factors
+
+**Description**: Resets the multiplication factors to the default values. The default values are calculated by our measurements with calibrated equipment.
+
+**Parameters**: None.
+
+**Returns**: Nothing.	
+
+```python
+def reset_factors(self):
+	self.apparent_factor = 1
+	self.vrms_factor = 1
+	self.irms_factor = 1
+	return
+``` 
 
 ### close
 
@@ -475,7 +521,7 @@ def start_sampling(self, nr_samples, samplerate):
 
 **Parameters**: None.
 
-**Return**: None.
+**Return**: Nothing.
 
 ```python
 def close(self):

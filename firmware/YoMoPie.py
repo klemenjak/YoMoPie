@@ -3,11 +3,13 @@ import math
 import spidev
 import sys
 import RPi.GPIO as GPIO
+from lib_nrf24 import NRF24
 
 class YoMoPie:
     read = 0b00111111
     write = 0b10000000
     spi=0
+	radio =0
     active_lines = 1
     debug = 1
 
@@ -186,3 +188,61 @@ class YoMoPie:
     def close(self):
         self.spi.close()
         return 0
+		
+		
+	#NRF24 communication
+
+	def init_nrf24(self):
+		pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]
+
+		self.radio = NRF24(GPIO, self.spi)
+		self.radio.begin(1, 13)
+		self.radio.setPayloadSize(32)
+		self.radio.setChannel(0x60)
+
+		self.radio.setDataRate(NRF24.BR_2MBPS)
+		self.radio.setPALevel(NRF24.PA_MIN)
+		self.radio.setAutoAck(True)
+		self.radio.enableDynamicPayloads()
+		self.radio.enableAckPayload()
+
+		self.radio.openWritingPipe(pipes[1])
+		self.radio.openReadingPipe(1, pipes[0])
+		self.radio.printDetails()
+		return
+
+	def write_nrf24(self, command):	
+		message = []
+		message = list(command)
+		self.radio.write(message)
+		print("Send: {}".format(message))
+		
+		if self.radio.isAckPayloadAvailable():
+			pl_buffer = []
+			self.radio.read(pl_buffer, self.radio.getDynamicPayloadSize())
+			print(pl_buffer)
+			print("Translating the acknowledgment to unicode chars...")
+			string = ""
+			for n in pl_buffer:
+				if((n >= 32 and n <= 126):
+					string += chr(n)
+			print(string)
+		return
+		
+	def read_nrf24(self):
+		print("Ready to receive data...")
+		self.radio.startListening()
+		pipe = [0]
+		while not self.radio.available(pipe):
+			time.sleep(1/100)
+		receivedMessage = []
+		self.radio.read(receivedMessage, self.radio.getDynamicPayloadSize())
+		
+		print("Translating the receivedMessage to unicode chars...")
+		string = ""
+		for n in receivedMessage:
+			if (n >= 32 and n <= 126):
+				string += chr(n)
+		print("Our sensor sent us: {}".format(string))
+		self.radio.stopListening()
+		return

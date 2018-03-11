@@ -19,6 +19,8 @@ class YoMoPie:
     vrms_factor = 1
     irms_factor = 1
 
+	#YoMoPie functions
+	
     def __init__(self):
         self.spi=spidev.SpiDev()
 		try:

@@ -12,7 +12,11 @@ yomo.write_16bit(0x13, [0x00, 0xC8])   ##LINCYC
 yomo.write_16bit(0x0F, [0x04, 0x00])   ##IRQEN
 
 
-pe=10
+pe=5
+
+Cf = 0.000014
+CfV = 0.000047159
+CfI = 0.000010807
 
 while True:
     
@@ -35,6 +39,9 @@ while True:
         -> load = 59,30W/h
         
         -> Cf = 0.000014
+        
+        -> Cf(VRMS) = 0.000047159
+        -> Cf(IRMS) = 0.000010807
     '''
     print("--------------------------")
     period = yomo.get_period()[1] * 0.0000024
@@ -50,8 +57,8 @@ while True:
     print("--------------------------")
   
    
-    print("VRMS = %d V" %(yomo.get_vrms()[1]))
-    print("IRMS = %d A" %(yomo.get_irms()[1]))
+    print("VRMS = %f V" %(yomo.get_vrms()[1]*CfV))
+    print("IRMS = %f A" %(yomo.get_irms()[1]*CfI))
 ##    print("Aenergy = %d" %yomo.read_24bit(0x01))
     raen=yomo.read_24bit(0x02)
     print("RAenergy = %d" %raen)
@@ -59,7 +66,7 @@ while True:
 ##    print("VAenergy = %d" %yomo.read_24bit(0x04))
 ##    print("RVAenergy = %d" %yomo.read_24bit(0x05))
 ##    print("LVAenergy = %d" %yomo.read_24bit(0x06))
-    print("%f Watt/h" %(raen*cf*3600/pe))
+    print("%f Watt/h" %(raen*Cf*3600/pe))
     time.sleep(pe)    
         
 yomo.close()   

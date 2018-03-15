@@ -12,6 +12,8 @@ yomo.write_16bit(0x13, [0x00, 0xC8])   ##LINCYC
 yomo.write_16bit(0x0F, [0x04, 0x00])   ##IRQEN
 
 
+pe=10
+
 while True:
     
     '''
@@ -24,6 +26,15 @@ while True:
         and
         
         Line Period(s) = Period Register * 2.4 * 10^-6
+        
+        
+        Simulated load with 100mVpp @ 50Hz on the input of the AMC1100 and the output of the CST1020:
+        calculated Load: 61,778Vpp and 1,92App
+        Ueff = 61,778/sqrt(2) = 43,68V
+        Ieff = 1,92/sqrt(2) = 1,375A
+        -> load = 59,30W/h
+        
+        -> Cf = 0.000014
     '''
     print("--------------------------")
     period = yomo.get_period()[1] * 0.0000024
@@ -34,19 +45,21 @@ while True:
     print("Accumulation time = %f s" %(atime))
     laenergy = yomo.get_laenergy()
     print("LAENERGY = %d" %(laenergy[1]))
-    cf = 61.9*(atime/3600)/((10+laenergy[1])/4)
+    cf = 59.3*(atime/3600)/((10+laenergy[1])/4)
     print("Wh/LSB const = %f" %(cf))
     print("--------------------------")
   
    
-##    print("VRMS = %d V" %(yomo.get_vrms()[1]))
-##    print("IRMS = %d A" %(yomo.get_irms()[1]))
+    print("VRMS = %d V" %(yomo.get_vrms()[1]))
+    print("IRMS = %d A" %(yomo.get_irms()[1]))
 ##    print("Aenergy = %d" %yomo.read_24bit(0x01))
-##    print("RAenergy = %d" %yomo.read_24bit(0x02))
+    raen=yomo.read_24bit(0x02)
+    print("RAenergy = %d" %raen)
 ##    print("LAenergy = %d" %yomo.read_24bit(0x03))
 ##    print("VAenergy = %d" %yomo.read_24bit(0x04))
 ##    print("RVAenergy = %d" %yomo.read_24bit(0x05))
 ##    print("LVAenergy = %d" %yomo.read_24bit(0x06))
-    time.sleep(1)    
+    print("%f Watt/h" %(raen*cf*3600/pe))
+    time.sleep(pe)    
         
 yomo.close()   

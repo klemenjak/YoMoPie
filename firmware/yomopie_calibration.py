@@ -1,15 +1,9 @@
 import YoMoPie
 import time
 
-yomo = YoMoPie.YoMoPie()
-##yomo.init_yomopie()
+yomo = YoMoPie.YoMoPie()  ##create a new YoMoPie Object
 
-yomo.set_lines(1)
-
-yomo.disable_board()
-time.sleep(1)
-yomo.enable_board()
-
+yomo.set_lines(1)  ##set number of lines to 1. Following commands will do the same
 
 yomo.write_8bit(0x0B, 0x10)  ##MMODE
 yomo.write_8bit(0x0D, 0x24)  ##WATMODE
@@ -17,31 +11,39 @@ yomo.write_8bit(0x0E, 0x24)  ##VAMODE
 yomo.write_16bit(0x13, [0x00, 0xC8])   ##LINCYC
 yomo.write_16bit(0x0F, [0x04, 0x00])   ##IRQEN
 
-##print(yomo.read_8bit(0x0B))
-##print(yomo.read_8bit(0x0D))
-##print(yomo.read_8bit(0x0E))
-##print(yomo.read_16bit(0x13))
-##print(yomo.read_16bit(0x0F))
 
 while True:
-##    periods = yomo.get_period()[1] * 0.0000024
-##    print("Line Periods = %f" %(periods))
-##    linecycles = yomo.read_16bit(0x13)
-##    print("Linecycles = %f" %(linecycles))
-##    atime = linecycles*periods/2
-##    print("Accumulation time = %f" %(atime))
-##    lappenergy = yomo.get_lappenergy()
-##    print("LVAENERGY = %d" %(lappenergy[1]))
-    ##cf = 61.9*(atime/3600)/(lappenergy[1]/4)
-    ##print("KOEFFIZIENT = %f" %(cf))
-
+    
+    '''
+        Wh/LSB constant = (W * Accumulation time(s)/3600)/(LAENERGY/4)
+        
+        with
+        
+        Accumulation time(s) = LINCYC[15:0] * Line Period/(2*#of phase selected)
+        
+        and
+        
+        Line Period(s) = Period Register * 2.4 * 10^-6
+    '''
+    print("--------------------------")
+    period = yomo.get_period()[1] * 0.0000024
+    print("Line Period = %f s" %(period))
+    linecycles = yomo.read_16bit(0x13)
+    print("Linecycles = %f" %(linecycles))
+    atime = linecycles*period/2
+    print("Accumulation time = %f s" %(atime))
+    laenergy = yomo.get_laenergy()
+    print("LAENERGY = %d" %(laenergy[1]))
+    cf = 61.9*(atime/3600)/((10+laenergy[1])/4)
+    print("Wh/LSB const = %f" %(cf))
+    print("--------------------------")
   
    
-##    print(yomo.get_vrms()[1])
-##    print(yomo.get_irms()[1])
+##    print("VRMS = %d V" %(yomo.get_vrms()[1]))
+##    print("IRMS = %d A" %(yomo.get_irms()[1]))
 ##    print("Aenergy = %d" %yomo.read_24bit(0x01))
 ##    print("RAenergy = %d" %yomo.read_24bit(0x02))
-    print("LAenergy = %d" %yomo.read_24bit(0x03))
+##    print("LAenergy = %d" %yomo.read_24bit(0x03))
 ##    print("VAenergy = %d" %yomo.read_24bit(0x04))
 ##    print("RVAenergy = %d" %yomo.read_24bit(0x05))
 ##    print("LVAenergy = %d" %yomo.read_24bit(0x06))

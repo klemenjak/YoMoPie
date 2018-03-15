@@ -82,6 +82,12 @@ class YoMoPie:
         result = self.spi.xfer2([register, 0x00, 0x00])[1:]
         dec_result = (result[0]<<8)+result[1]
         return dec_result
+    
+    def write_16bit(self, register, value):
+        self.enable_board()
+        register = register | self.write
+        self.spi.xfer2([register, value[0], value[1]])
+        return
 
     def read_24bit(self, register):
         self.enable_board()
@@ -102,6 +108,14 @@ class YoMoPie:
     def get_appenergy(self):
     	appenergy = [time.time(), self.read_24bit(0x05)]
     	return appenergy
+    
+    def get_laenergy(self):
+        laenergy = [time.time(), self.read_24bit(0x03)]
+        return laenergy
+
+    def get_lappenergy(self):
+    	lappenergy = [time.time(), self.read_24bit(0x06)]
+    	return lappenergy
 
     def get_period(self):
         period = [time.time(), self.read_16bit(0x07)]

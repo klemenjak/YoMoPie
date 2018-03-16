@@ -16,8 +16,8 @@ class YoMoPie:
     sample_intervall = 1
     max_f_sample = 10
     
-    active_power_LSB= 0.000013171
-    apparent_power_LSB= 0.000010045
+    active_power_LSB= 0.000013292
+    apparent_power_LSB= 0.00001024
     vrms_factor = 0.000047159
     irms_factor = 0.000010807
 

@@ -13,12 +13,6 @@ yomo.write_16bit(0x13, [0x00, 0xC8])   ##LINCYC
 yomo.write_16bit(0x0F, [0x04, 0x00])   ##IRQEN
 
 
-
-yomo.write_16bit(0x25, [0x00, 0x00])   ##CFNUM for negativ Energy calculation
-
-
-print(yomo.read_8bit(0x0D));
-
 pe=1
 
 Cf = 0.000014
@@ -66,7 +60,7 @@ while True:
 ##    print("--------------------------")
 ##  
   
-##    yomo.do_n_measurements(1000,5,"calibration_99_4_2018.log")
+    yomo.do_n_measurements(1000,5,"calibration_99_4_2018.log")
   
 ##yomo.do_n_measurements(1000,1,"test_150mv.log")
    
@@ -80,9 +74,9 @@ while True:
 ##    print("RVAenergy = %d" %yomo.read_24bit(0x05))
 ##    print("LVAenergy = %d" %yomo.read_24bit(0x06))
 ##    print("%f Watt/h" %(raen*Cf*3600/pe))
-    time.sleep(pe)
-    print(yomo.read_16bit(0x25))
-    print(yomo.read_24bit(0x02))
+    ##time.sleep(pe)
+    ##print(yomo.read_16bit(0x25))
+    ##print(yomo.read_24bit(0x02))
     ##print(yomo.read_24bit(0x03))
     ##print(yomo.read_24bit(0x05))
         

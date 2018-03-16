@@ -80,6 +80,7 @@ class YoMoPie:
         self.enable_board()
         register = register & self.read
         result = self.spi.xfer2([register, 0x00, 0x00])[1:]
+        print(result)
         dec_result = (result[0]<<8)+result[1]
         return dec_result
     
@@ -93,6 +94,7 @@ class YoMoPie:
         self.enable_board()
         register = register & self.read
         result = self.spi.xfer2([register, 0x00, 0x00, 0x00])[1:]
+        print(result)
         dec_result = (result[0]<<16)+(result[1]<<8)+(result[2])   ##error 1
         return dec_result
 

@@ -3,19 +3,23 @@ import time
 
 yomo = YoMoPie.YoMoPie()  ##create a new YoMoPie Object
 
-yomo.set_lines(1)  ##set number of lines to 1. Following commands will do the same
+##yomo.set_lines(1)  ##set number of lines to 1. Following commands will do the same
 
-yomo.write_8bit(0x0B, 0x10)  ##MMODE
-yomo.write_8bit(0x0D, 0x24)  ##WATMODE
-yomo.write_8bit(0x0E, 0x24)  ##VAMODE
+
+yomo.write_8bit(0x0B, 0x10)  ##MMODE 0x10
+yomo.write_8bit(0x0D, 0x24)  ##WATMODE 0x24
+yomo.write_8bit(0x0E, 0x24)  ##VAMODE 0x24
 yomo.write_16bit(0x13, [0x00, 0xC8])   ##LINCYC
 yomo.write_16bit(0x0F, [0x04, 0x00])   ##IRQEN
 
-print(yomo.read_8bit(0x0B));
-print(yomo.read_8bit(0x0D));
-print(yomo.read_8bit(0x0E));
 
-pe=5
+
+yomo.write_16bit(0x25, [0x00, 0x00])   ##CFNUM for negativ Energy calculation
+
+
+print(yomo.read_8bit(0x0D));
+
+pe=1
 
 Cf = 0.000014
 CfV = 0.000047159
@@ -62,9 +66,7 @@ while True:
 ##    print("--------------------------")
 ##  
   
-    yomo.disable_board()
-    yomo.enable_board()
-    yomo.do_n_measurements(1000,5,"calibration_99_4_2018.log")
+##    yomo.do_n_measurements(1000,5,"calibration_99_4_2018.log")
   
 ##yomo.do_n_measurements(1000,1,"test_150mv.log")
    
@@ -78,6 +80,10 @@ while True:
 ##    print("RVAenergy = %d" %yomo.read_24bit(0x05))
 ##    print("LVAenergy = %d" %yomo.read_24bit(0x06))
 ##    print("%f Watt/h" %(raen*Cf*3600/pe))
-##    time.sleep(pe)    
+    time.sleep(pe)
+    print(yomo.read_16bit(0x25))
+    print(yomo.read_24bit(0x02))
+    ##print(yomo.read_24bit(0x03))
+    ##print(yomo.read_24bit(0x05))
         
 yomo.close()   

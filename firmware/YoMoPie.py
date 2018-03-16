@@ -93,7 +93,7 @@ class YoMoPie:
         self.enable_board()
         register = register & self.read
         result = self.spi.xfer2([register, 0x00, 0x00, 0x00])[1:]
-        dec_result = (result[0]<<16)+(result[1]<<8)+(result[0])
+        dec_result = (result[0]<<16)+(result[1]<<8)+(result[2])
         return dec_result
 
     def get_temp(self):

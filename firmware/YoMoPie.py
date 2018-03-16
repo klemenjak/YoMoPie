@@ -14,10 +14,10 @@ class YoMoPie:
     debug = 1
 
     sampleintervall = 1
-    active_factor = 1
+    active_factor = 0.000014
     apparent_factor = 1
-    vrms_factor = 1
-    irms_factor = 1
+    vrms_factor = 0.000047159
+    irms_factor = 0.000010807
 
 	#YoMoPie functions
 	
@@ -173,11 +173,11 @@ class YoMoPie:
     	return 0
     
     def get_sampleperperiod(self, samplerate):
-    	aenergy = self.get_aenergy()[1] *self.active_factor * samplerate/3600
-    	appenergy = self.get_appenergy()[1] *self.apparent_factor * samplerate/3600
+    	aenergy = self.get_aenergy()[1] *self.active_factor * 3600/samplerate
+    	appenergy = self.get_appenergy()[1] *self.apparent_factor * 3600/samplerate
     	renergy = math.sqrt(appenergy*appenergy - aenergy*aenergy)
-    	vrms = self.get_vrms()[1]*self.vrms_factor* samplerate/3600
-    	irms = self.get_irms()[1]*self.irms_factor* samplerate/3600
+    	vrms = self.get_vrms()[1]*self.vrms_factor
+    	irms = self.get_irms()[1]*self.irms_factor
     	if self.debug:
     		print"Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var" % (aenergy, appenergy, renergy)
     		print"VRMS: %f IRMS: %f" %(vrms,irms)
@@ -191,7 +191,7 @@ class YoMoPie:
     	sample.append(irms)
     	return sample
 
-    def do_n_measurements(self, nr_samples, samplerate):
+    def do_n_measurements(self, nr_samples, samplerate, file):
         if (samplerate<1) or (nr_samples<1):
             return 0
         self.sampleintervall = samplerate
@@ -201,7 +201,7 @@ class YoMoPie:
                 time.sleep(1)
             sample = self.get_sampleperperiod(samplerate)
 	    samples.append(sample)
-	    logfile = open("samples.log", "a")
+	    logfile = open(file, "a")
             for value in sample:
 		logfile.write("%s; " % value)
 	    logfile.write("\n")

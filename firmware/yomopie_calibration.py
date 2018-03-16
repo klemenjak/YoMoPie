@@ -18,9 +18,9 @@ Cf = 0.000014
 CfV = 0.000047159
 CfI = 0.000010807
 
-while True:
+
     
-    '''
+'''
         Wh/LSB constant = (W * Accumulation time(s)/3600)/(LAENERGY/4)
         
         with
@@ -42,31 +42,32 @@ while True:
         
         -> Cf(VRMS) = 0.000047159
         -> Cf(IRMS) = 0.000010807
-    '''
-    print("--------------------------")
-    period = yomo.get_period()[1] * 0.0000024
-    print("Line Period = %f s" %(period))
-    linecycles = yomo.read_16bit(0x13)
-    print("Linecycles = %f" %(linecycles))
-    atime = linecycles*period/2
-    print("Accumulation time = %f s" %(atime))
-    laenergy = yomo.get_laenergy()
-    print("LAENERGY = %d" %(laenergy[1]))
-    cf = 59.3*(atime/3600)/((10+laenergy[1])/4)
-    print("Wh/LSB const = %f" %(cf))
-    print("--------------------------")
+'''
+##    print("--------------------------")
+##    period = yomo.get_period()[1] * 0.0000024
+##    print("Line Period = %f s" %(period))
+##    linecycles = yomo.read_16bit(0x13)
+##    print("Linecycles = %f" %(linecycles))
+##    atime = linecycles*period/2
+##    print("Accumulation time = %f s" %(atime))
+##    laenergy = yomo.get_laenergy()
+##    print("LAENERGY = %d" %(laenergy[1]))
+##    cf = 59.3*(atime/3600)/((10+laenergy[1])/4)
+##    print("Wh/LSB const = %f" %(cf))
+##    print("--------------------------")
   
+yomo.do_n_measurements(1000,1,"test_150mv.log")
    
-    print("VRMS = %f V" %(yomo.get_vrms()[1]*CfV))
-    print("IRMS = %f A" %(yomo.get_irms()[1]*CfI))
+##    print("VRMS = %f V" %(yomo.get_vrms()[1]*CfV))
+##    print("IRMS = %f A" %(yomo.get_irms()[1]*CfI))
 ##    print("Aenergy = %d" %yomo.read_24bit(0x01))
-    raen=yomo.read_24bit(0x02)
-    print("RAenergy = %d" %raen)
+##    raen=yomo.read_24bit(0x02)
+##    print("RAenergy = %d" %raen)
 ##    print("LAenergy = %d" %yomo.read_24bit(0x03))
 ##    print("VAenergy = %d" %yomo.read_24bit(0x04))
 ##    print("RVAenergy = %d" %yomo.read_24bit(0x05))
 ##    print("LVAenergy = %d" %yomo.read_24bit(0x06))
-    print("%f Watt/h" %(raen*Cf*3600/pe))
-    time.sleep(pe)    
+##    print("%f Watt/h" %(raen*Cf*3600/pe))
+##    time.sleep(pe)    
         
 yomo.close()   

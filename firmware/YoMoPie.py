@@ -14,8 +14,9 @@ class YoMoPie:
     debug = 1
 
     sampleintervall = 1
-    active_factor = 0.000014
-    apparent_factor = 1
+    
+    active_factor= 0.000013171
+    apparent_factor= 0.000010045
     vrms_factor = 0.000047159
     irms_factor = 0.000010807
 
@@ -175,7 +176,7 @@ class YoMoPie:
     def get_sampleperperiod(self, samplerate):
     	aenergy = self.get_aenergy()[1] *self.active_factor * 3600/samplerate
     	appenergy = self.get_appenergy()[1] *self.apparent_factor * 3600/samplerate
-    	renergy = math.sqrt(appenergy*appenergy - aenergy*aenergy)
+    	renergy = math.sqrt(abs(appenergy*appenergy - aenergy*aenergy))
     	vrms = self.get_vrms()[1]*self.vrms_factor
     	irms = self.get_irms()[1]*self.irms_factor
     	if self.debug:

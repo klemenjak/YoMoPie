@@ -25,13 +25,12 @@ class YoMoPie:
 	
     def __init__(self):
         self.spi=spidev.SpiDev()
-        try:
-            self.init_yomopie()
-        except Error as err:
-            print("Unexpected error:", format(err.args))
-            return 0
-        return
-
+        self.init_yomopie()
+        #except Error as err:
+            #print("Unexpected error:", format(err.args))
+         #   return 0
+        #return
+         
     def init_yomopie(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
@@ -45,19 +44,19 @@ class YoMoPie:
 
     def set_lines(self, lines):
 		if (lines != 1) and (lines != 3):
-            print "Incompatible number of power lines"
-            return
+                    print("Incompatible number of power lines")
+                    return
 		else:
-			self.active_lines = lines
-        if self.active_lines == 3:
-        	self.write_8bit(0x0D, 0x3F)
-        	self.write_8bit(0x0E, 0x3F)
-        	self.set_mmode(0x70)
-        elif self.active_lines == 1:
-            self.write_8bit(0x0D, 0x24)
-            self.write_8bit(0x0E, 0x24)
-            self.set_mmode(0x10)
-        return
+                    self.active_lines = lines
+                if self.active_lines == 3:
+                    self.write_8bit(0x0D, 0x3F)
+                    self.write_8bit(0x0E, 0x3F)
+                    self.set_measurement_mode(0x70)
+                elif self.active_lines == 1:
+                    self.write_8bit(0x0E, 0x24)
+                    self.set_measurement_mode(0x10)
+                    self.write_8bit(0x0D, 0x24)
+                return
 
     def enable_board(self):
         GPIO.output(19, GPIO.HIGH)
@@ -125,19 +124,19 @@ class YoMoPie:
     	return
     	
 	def close_SPI_connection(self):
-        self.spi.close()
+            self.spi.close()
         return 0
         
     def get_aenergy(self):
-        aenergy = [time.time(), active_power_LSB * self.read_24bit(0x01) *  3600/self.sample_intervall]
+        aenergy = [time.time(), self.active_power_LSB * self.read_24bit(0x01) *  3600/self.sample_intervall]
         return aenergy
 
     def get_active_energy(self):
-        aenergy =  [time.time(), active_power_LSB * self.read_24bit(0x02) *  3600/self.sample_intervall] 
+        aenergy =  [time.time(), self.active_power_LSB * self.read_24bit(0x02) *  3600/self.sample_intervall] 
         return aenergy
 
     def get_apparent_energy(self):
-    	appenergy = [time.time(), apparent_power_LSB * self.read_24bit(0x05)*  3600/self.sample_intervall]
+    	appenergy = [time.time(), self.apparent_power_LSB * self.read_24bit(0x05)*  3600/self.sample_intervall]
     	return appenergy
     	
     def get_vrms(self):

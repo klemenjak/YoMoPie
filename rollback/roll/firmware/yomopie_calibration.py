@@ -11,6 +11,9 @@ yomo.write_8bit(0x0E, 0x24)  ##VAMODE
 yomo.write_16bit(0x13, [0x00, 0xC8])   ##LINCYC
 yomo.write_16bit(0x0F, [0x04, 0x00])   ##IRQEN
 
+print(yomo.read_8bit(0x0B));
+print(yomo.read_8bit(0x0D));
+print(yomo.read_8bit(0x0E));
 
 pe=5
 
@@ -45,18 +48,23 @@ watt = 58.3
 '''
 
 while True:
-    print("--------------------------")
-    period = yomo.get_period()[1] * 0.0000024
-    print("Line Period = %f s" %(period))
-    linecycles = yomo.read_16bit(0x13)
-    print("Linecycles = %f" %(linecycles))
-    atime = linecycles*period/2
-    print("Accumulation time = %f s" %(atime))
-    laenergy = yomo.get_laenergy()
-    print("LAENERGY = %d" %(laenergy[1]))
-    cf = watt*(atime/3600)/((1+laenergy[1])/4)
-    print("Wh/LSB const = %f" %(cf))
-    print("--------------------------")
+##    print("--------------------------")
+##    period = yomo.get_period()[1] * 0.0000024
+##    print("Line Period = %f s" %(period))
+##    linecycles = yomo.read_16bit(0x13)
+##    print("Linecycles = %f" %(linecycles))
+##    atime = linecycles*period/2
+##    print("Accumulation time = %f s" %(atime))
+##    laenergy = yomo.get_laenergy()
+##    print("LAENERGY = %d" %(laenergy[1]))
+##    cf = watt*(atime/3600)/((1+laenergy[1])/4)
+##    print("Wh/LSB const = %f" %(cf))
+##    print("--------------------------")
+##  
+  
+    yomo.disable_board()
+    yomo.enable_board()
+    yomo.do_n_measurements(1000,5,"calibration_99_4_2018.log")
   
 ##yomo.do_n_measurements(1000,1,"test_150mv.log")
    

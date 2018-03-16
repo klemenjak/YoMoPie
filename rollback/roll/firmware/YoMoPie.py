@@ -14,8 +14,8 @@ class YoMoPie:
     debug = 1
 
     sampleintervall = 1
-    active_factor = 0.000014
-    apparent_factor = 1
+    active_factor = 0.000013292
+    apparent_factor = 0.00001024
     vrms_factor = 0.000047159
     irms_factor = 0.000010807
 
@@ -93,7 +93,7 @@ class YoMoPie:
         self.enable_board()
         register = register & self.read
         result = self.spi.xfer2([register, 0x00, 0x00, 0x00])[1:]
-        dec_result = (result[0]<<16)+(result[1]<<8)+(result[0])
+        dec_result = (result[0]<<16)+(result[1]<<8)+(result[2])   ##error 1
         return dec_result
 
     def get_temp(self):
@@ -132,7 +132,7 @@ class YoMoPie:
     def get_sample(self):
     	aenergy = self.get_aenergy()[1] *self.active_factor
     	appenergy = self.get_appenergy()[1] *self.apparent_factor
-    	renergy = math.sqrt(appenergy*appenergy - aenergy*aenergy)
+    	renergy = 1#math.sqrt(appenergy*appenergy - aenergy*aenergy)
     	if self.debug:
     		print"Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var" % (aenergy, appenergy, renergy)
     		print"VRMS: %f IRMS: %f" %(self.get_vrms()[1]*self.vrms_factor,self.get_irms()[1]*self.irms_factor)
@@ -175,7 +175,7 @@ class YoMoPie:
     def get_sampleperperiod(self, samplerate):
     	aenergy = self.get_aenergy()[1] *self.active_factor * 3600/samplerate
     	appenergy = self.get_appenergy()[1] *self.apparent_factor * 3600/samplerate
-    	renergy = math.sqrt(appenergy*appenergy - aenergy*aenergy)
+    	renergy = 0#math.sqrt(appenergy*appenergy - aenergy*aenergy)
     	vrms = self.get_vrms()[1]*self.vrms_factor
     	irms = self.get_irms()[1]*self.irms_factor
     	if self.debug:

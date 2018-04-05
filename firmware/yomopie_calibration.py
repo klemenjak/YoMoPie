@@ -18,7 +18,7 @@ Cf = 0.000014
 CfV = 0.000047159
 CfI = 0.000010807
 
-
+watt = 58.3
     
 '''
         Wh/LSB constant = (W * Accumulation time(s)/3600)/(LAENERGY/4)
@@ -43,20 +43,22 @@ CfI = 0.000010807
         -> Cf(VRMS) = 0.000047159
         -> Cf(IRMS) = 0.000010807
 '''
-##    print("--------------------------")
-##    period = yomo.get_period()[1] * 0.0000024
-##    print("Line Period = %f s" %(period))
-##    linecycles = yomo.read_16bit(0x13)
-##    print("Linecycles = %f" %(linecycles))
-##    atime = linecycles*period/2
-##    print("Accumulation time = %f s" %(atime))
-##    laenergy = yomo.get_laenergy()
-##    print("LAENERGY = %d" %(laenergy[1]))
-##    cf = 59.3*(atime/3600)/((10+laenergy[1])/4)
-##    print("Wh/LSB const = %f" %(cf))
-##    print("--------------------------")
+
+while True:
+    print("--------------------------")
+    period = yomo.get_period()[1] * 0.0000024
+    print("Line Period = %f s" %(period))
+    linecycles = yomo.read_16bit(0x13)
+    print("Linecycles = %f" %(linecycles))
+    atime = linecycles*period/2
+    print("Accumulation time = %f s" %(atime))
+    laenergy = yomo.get_laenergy()
+    print("LAENERGY = %d" %(laenergy[1]))
+    cf = watt*(atime/3600)/((1+laenergy[1])/4)
+    print("Wh/LSB const = %f" %(cf))
+    print("--------------------------")
   
-yomo.do_n_measurements(1000,1,"test_150mv.log")
+##yomo.do_n_measurements(1000,1,"test_150mv.log")
    
 ##    print("VRMS = %f V" %(yomo.get_vrms()[1]*CfV))
 ##    print("IRMS = %f A" %(yomo.get_irms()[1]*CfI))

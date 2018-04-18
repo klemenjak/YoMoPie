@@ -13,10 +13,11 @@ class YoMoPie:
     active_lines = 1
     debug = 1
 
-    sampleintervall = 1
+    sample_intervall = 1
+    max_f_sample = 10
     
-    active_factor= 0.000013171
-    apparent_factor= 0.000010045
+    active_power_LSB= 0.000013171
+    apparent_power_LSB= 0.000010045
     vrms_factor = 0.000047159
     irms_factor = 0.000010807
 
@@ -39,18 +40,19 @@ class YoMoPie:
         self.spi.max_speed_hz = 62500
         self.spi.mode = 0b01
         self.set_lines(self.active_lines)
+        self.sampleintervall = 1
         return
 
     def set_lines(self, lines):
-	if (lines != 1) and (lines != 3):
-            print "Wrong number of lines"
+		if (lines != 1) and (lines != 3):
+            print "Incompatible number of power lines"
             return
-	else:
-            self.active_lines = lines
+		else:
+			self.active_lines = lines
         if self.active_lines == 3:
-                self.write_8bit(0x0D, 0x3F)
-                self.write_8bit(0x0E, 0x3F)
-		self.set_mmode(0x70)
+        	self.write_8bit(0x0D, 0x3F)
+        	self.write_8bit(0x0E, 0x3F)
+        	self.set_mmode(0x70)
         elif self.active_lines == 1:
             self.write_8bit(0x0D, 0x24)
             self.write_8bit(0x0E, 0x24)
@@ -101,15 +103,7 @@ class YoMoPie:
         reg = self.read_8bit(0x08)
         temp = [time.time(),(reg-129)/4]
         return temp
-
-    def get_aenergy(self):
-        aenergy = [time.time(), self.read_24bit(0x02)]
-        return aenergy
-
-    def get_appenergy(self):
-    	appenergy = [time.time(), self.read_24bit(0x05)]
-    	return appenergy
-    
+        
     def get_laenergy(self):
         laenergy = [time.time(), self.read_24bit(0x03)]
         return laenergy
@@ -122,34 +116,33 @@ class YoMoPie:
         period = [time.time(), self.read_16bit(0x07)]
         return period
 
-    def set_opmode(self, value):
+    def set_operational_mode(self, value):
     	self.write_8bit(0x0A, value)
     	return
 
-    def set_mmode(self, value):
+    def set_measurement_mode(self, value):
     	self.write_8bit(0x0B, value)
     	return
+    	
+	def close_SPI_connection(self):
+        self.spi.close()
+        return 0
+        
+    def get_aenergy(self):
+        aenergy = [time.time(), active_power_LSB * self.read_24bit(0x01) *  3600/self.sample_intervall]
+        return aenergy
 
-    def get_sample(self):
-    	aenergy = self.get_aenergy()[1] *self.active_factor
-    	appenergy = self.get_appenergy()[1] *self.apparent_factor
-    	renergy = math.sqrt(appenergy*appenergy - aenergy*aenergy)
-    	if self.debug:
-    		print"Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var" % (aenergy, appenergy, renergy)
-    		print"VRMS: %f IRMS: %f" %(self.get_vrms()[1]*self.vrms_factor,self.get_irms()[1]*self.irms_factor)
-    	sample = []
-    	sample.append(time.time())
-    	sample.append(aenergy)
-    	sample.append(appenergy)
-    	sample.append(renergy)
-    	sample.append(self.get_period()[1])
-    	sample.append(self.get_vrms()[1]*self.vrms_factor)
-    	sample.append(self.get_irms()[1]*self.irms_factor)
-    	return sample
+    def get_active_energy(self):
+        aenergy =  [time.time(), active_power_LSB * self.read_24bit(0x02) *  3600/self.sample_intervall] 
+        return aenergy
 
+    def get_apparent_energy(self):
+    	appenergy = [time.time(), apparent_power_LSB * self.read_24bit(0x05)*  3600/self.sample_intervall]
+    	return appenergy
+    	
     def get_vrms(self):
     	if self.active_lines == 1:
-    		avrms = [time.time(), self.read_24bit(0x2C)]
+    		avrms = self.vrms_factor * [time.time(), self.read_24bit(0x2C)]
     		return avrms
     	elif self.active_lines == 3:
                 vrms = []
@@ -172,6 +165,24 @@ class YoMoPie:
     		irms.append(self.read_24bit(0x2B))
     		return vrms
     	return 0
+    '''
+    def get_sample(self):
+    	aenergy = self.get_aenergy()[1] *self.active_factor
+    	appenergy = self.get_appenergy()[1] *self.apparent_factor
+    	renergy = math.sqrt(appenergy*appenergy - aenergy*aenergy)
+    	if self.debug:
+    		print"Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var" % (aenergy, appenergy, renergy)
+    		print"VRMS: %f IRMS: %f" %(self.get_vrms()[1]*self.vrms_factor,self.get_irms()[1]*self.irms_factor)
+    	sample = []
+    	sample.append(time.time())
+    	sample.append(aenergy)
+    	sample.append(appenergy)
+    	sample.append(renergy)
+    	sample.append(self.get_period()[1])
+    	sample.append(self.get_vrms()[1]*self.vrms_factor)
+    	sample.append(self.get_irms()[1]*self.irms_factor)
+    	return sample
+	'''
     
     def get_sampleperperiod(self, samplerate):
     	aenergy = self.get_aenergy()[1] *self.active_factor * 3600/samplerate
@@ -195,7 +206,7 @@ class YoMoPie:
     def do_n_measurements(self, nr_samples, samplerate, file):
         if (samplerate<1) or (nr_samples<1):
             return 0
-        self.sampleintervall = samplerate
+        self.sample_intervall = samplerate
         samples = []
         for i in range(0, nr_samples):
             for j in range(0, samplerate):
@@ -208,7 +219,26 @@ class YoMoPie:
 	    logfile.write("\n")
             logfile.close()
         return samples
-		
+
+	def do_metering(self, f_sample, file):
+		if (f_sample > max_f_sample):
+			print('Incompatible sampling frequency!')
+			return 1
+		if (file == ''):
+			file = 'smart_meter_output.csv'
+		for i in range(0,86400):
+			sample = []
+			sample.append(time.time())
+			sample.append(i)
+			sample.append(self.get_active_energy())
+			sample.append(self.get_apparent_energy())
+			data_file = open(file,'a')
+			for value in sample:
+				logfile.write("%s; " % value)
+	    	logfile.write("\n")
+	    	print(sample)
+		return 0
+'''
     def change_factors(self, apparent_f, vrms_f, irms_f):
 	self.apparent_factor = apparent_f
 	self.vrms_factor = vrms_f
@@ -220,12 +250,6 @@ class YoMoPie:
 	self.vrms_factor = 1
 	self.irms_factor = 1
 	return
-
-    def close(self):
-        self.spi.close()
-        return 0
-		
-		
 	#NRF24 communication
 
     def init_nrf24(self):
@@ -281,3 +305,4 @@ class YoMoPie:
             print("Our sensor sent us: {}".format(string))
         self.radio.stopListening()
 	return
+	'''

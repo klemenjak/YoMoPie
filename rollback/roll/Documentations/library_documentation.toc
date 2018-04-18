@@ -1,0 +1,27 @@
+\select@language {naustrian}
+\contentsline {section}{\numberline {1}Imports}{3}{section.1}
+\contentsline {section}{\numberline {2}Classvariables}{3}{section.2}
+\contentsline {section}{\numberline {3}Methods}{4}{section.3}
+\contentsline {subsection}{\numberline {3.1}__init__}{4}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}init_yomopi}{4}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}set_lines}{4}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}enable_board}{5}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}disable_board}{5}{subsection.3.5}
+\contentsline {subsection}{\numberline {3.6}write_8bit}{5}{subsection.3.6}
+\contentsline {subsection}{\numberline {3.7}read_8bit}{5}{subsection.3.7}
+\contentsline {subsection}{\numberline {3.8}read_16bit}{6}{subsection.3.8}
+\contentsline {subsection}{\numberline {3.9}read_24bit}{6}{subsection.3.9}
+\contentsline {subsection}{\numberline {3.10}get_temp}{6}{subsection.3.10}
+\contentsline {subsection}{\numberline {3.11}get_aenergy}{6}{subsection.3.11}
+\contentsline {subsection}{\numberline {3.12}get_appenergy}{7}{subsection.3.12}
+\contentsline {subsection}{\numberline {3.13}get_period}{7}{subsection.3.13}
+\contentsline {subsection}{\numberline {3.14}set_opmode}{7}{subsection.3.14}
+\contentsline {subsection}{\numberline {3.15}set_mmode}{7}{subsection.3.15}
+\contentsline {subsection}{\numberline {3.16}get_sample}{8}{subsection.3.16}
+\contentsline {subsection}{\numberline {3.17}get_vrms}{8}{subsection.3.17}
+\contentsline {subsection}{\numberline {3.18}get_irms}{8}{subsection.3.18}
+\contentsline {subsection}{\numberline {3.19}start_sampling}{9}{subsection.3.19}
+\contentsline {subsection}{\numberline {3.20}close}{9}{subsection.3.20}
+\contentsline {section}{\numberline {4}OPMODE}{10}{section.4}
+\contentsline {section}{\numberline {5}MMODE}{11}{section.5}
+\contentsline {section}{\numberline {6}Examples}{11}{section.6}

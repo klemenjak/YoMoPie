@@ -65,6 +65,10 @@ class YoMoPie:
     def disable_board(self):
         GPIO.output(19, GPIO.LOW)
         return
+		
+	def chip_reset(self):
+		self.write_8bit(0x0A, 0x40)
+		return
 
     def write_8bit(self, register, value):
         self.enable_board()

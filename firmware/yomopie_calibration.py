@@ -1,6 +1,8 @@
 import YoMoPie
 import time
 
+
+##INIT
 yomo = YoMoPie.YoMoPie()  ##create a new YoMoPie Object
 
 yomo.set_lines(1)  ##set number of lines to 1. Following commands will do the same
@@ -12,7 +14,7 @@ yomo.write_16bit(0x13, [0x00, 0xC8])   ##LINCYC 0d200
 yomo.write_16bit(0x0F, [0x04, 0x00])   ##IRQEN 0x0400
 
 
-pe=0.1
+
 
 Cf = 0.000013171
 CfVA= 0.000010045
@@ -23,7 +25,9 @@ CfI = 0.000010807
 
 
 watt = 1026.2
-VA = 56.04 ##Vrms * Irms
+VA = 56.04 
+measurement = 1	     ## 1...Watt/h calibration, 2...VA/h calibration, 3...Cf and CfVA testing
+pe=0.1
     
 '''
         Wh/LSB constant = (W * Accumulation time(s)/3600)/(LAENERGY/4)
@@ -69,36 +73,47 @@ VA = 56.04 ##Vrms * Irms
         -> Cf(VA/LSB) = 0.000010045
 '''
 
-
-##    print("--------------------------")
-##    period = yomo.get_period()[1] * 0.0000024
-##    print("Line Period = %f s" %(period))
-##    linecycles = yomo.read_16bit(0x13)
-##    print("Linecycles = %f" %(linecycles))
-##    atime = linecycles*period/2
-##    print("Accumulation time = %f s" %(atime))
-##    laenergy = yomo.get_lappenergy()
-##    print("LAPPENERGY = %d" %(laenergy[1]))
-##    cf = VA*(atime/3600)/((laenergy[1]+10))
-##    print("Wh/LSB const = %f" %(cf))
-##    print("Wh/LSB const *1000 = %f" %(cf*1000))
-##    print("--------------------------")
-yomo.disable_board()
-yomo.enable_board()
-yomo.do_n_measurements(1000,5,"calibration_11_4_2018.log")
-   
-##    print("VRMS = %f V" %(yomo.get_vrms()[1]*CfV))
-##    print("IRMS = %f A" %(yomo.get_irms()[1]*CfI))
-##    print("Aenergy = %d" %yomo.read_24bit(0x01))
-##    raen=yomo.read_24bit(0x02)
-    ##print("RAenergy = %d" %raen)
-##    print("VAenergy = %d" %yomo.read_24bit(0x04))
-##    print("RVAenergy = %d" %yomo.read_24bit(0x05))
-##    raven=yomo.read_24bit(0x05)
-##    print("%f Watt/h, %f VA/h" %((raen*Cf*3600/pe), (raven*CfVA*3600/pe)))
-    ##print("RVAenergy = %d" %raven)    
-    ##print("%f VA/h" %(raven*CfVA*3600/pe))
-    
-   ## time.sleep(pe)    
+##MEASUREMENTS
+while True:
+	if masurement == 1:
+		print("--------------------------")
+		period = yomo.get_period()[1] * 0.0000024
+		print("Line Period = %f s" %(period))
+		linecycles = yomo.read_16bit(0x13)
+		print("Linecycles = %f" %(linecycles))
+		atime = linecycles*period/2
+		print("Accumulation time = %f s" %(atime))
+		laenergy = yomo.get_laenergy()
+		print("LAPPENERGY = %d" %(laenergy[1]))
+		cf = watt*(atime/3600)/((laenergy[1]+10))
+		print("Wh/LSB const = %f" %(cf))
+		print("Wh/LSB const *1000 = %f" %(cf*1000))
+		print("--------------------------")
+	elif measurement == 2:		
+		period = yomo.get_period()[1] * 0.0000024
+		print("Line Period = %f s" %(period))
+		linecycles = yomo.read_16bit(0x13)
+		print("Linecycles = %f" %(linecycles))
+		atime = linecycles*period/2
+		print("Accumulation time = %f s" %(atime))
+		lappenergy = yomo.get_lappenergy()
+		print("LAPPENERGY = %d" %(lappenergy[1]))
+		cf = VA*(atime/3600)/((lappenergy[1]+10))
+		print("Wh/LSB const = %f" %(cf))
+		print("Wh/LSB const *1000 = %f" %(cf*1000))
+		print("--------------------------")
+	elif measurement == 3:	
+		print("VRMS = %f V" %(yomo.get_vrms()[1]*CfV))
+		print("IRMS = %f A" %(yomo.get_irms()[1]*CfI))
+		print("Aenergy = %d" %yomo.read_24bit(0x01))
+		raen=yomo.read_24bit(0x02)
+		print("RAenergy = %d" %raen)
+		print("VAenergy = %d" %yomo.read_24bit(0x04))
+		print("RVAenergy = %d" %yomo.read_24bit(0x05))
+		raven=yomo.read_24bit(0x05)
+		print("%f Watt/h, %f VA/h" %((raen*Cf*3600/pe), (raven*CfVA*3600/pe)))
+		print("RVAenergy = %d" %raven)    
+		print("%f VA/h" %(raven*CfVA*3600/pe))
+    time.sleep(pe)    
         
 yomo.close()   

@@ -2,6 +2,7 @@
 
 import YoMoPie
 import csv, time
+from datetime import datetime
 
 def write_to_CSV(destination, data):
     datafile = open(destination, 'a')
@@ -81,6 +82,7 @@ if measurement_selector == 3:
         b = time.time()
         time_diff = b - a
         sample.append(b)
+        sample.append(str(datetime.now()))
         sample.append(time_diff)
         active = yomo.read_24bit(0x02)
         apparent = yomo.read_24bit(0x05)

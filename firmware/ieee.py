@@ -70,4 +70,27 @@ if measurement_selector ==2:
         #print(sample)
         if(yomo.sample_intervall-duration)>0:
 			time.sleep(yomo.sample_intervall-duration)
-    
+
+
+if measurement_selector == 3:
+    yomo.sample_intervall = 1
+    a = time.time()
+    write_to_CSV('/home/pi/Schreibtisch/YoMoPie/firmware/measurements_exp3.csv','t,d,a,r,p,r')
+    while(1):
+        sample = []
+        b = time.time()
+        time_diff = b - a
+        sample.append(b)
+        sample.append(time_diff)
+        active = yomo.read_24bit(0x02)
+        apparent = yomo.read_24bit(0x05)
+        sample.append(active)
+        sample.append(yomo.active_power_LSB * active *  3600/time_diff)
+        sample.append(apparent)
+        sample.append(yomo.apparent_power_LSB * apparent *  3600/time_diff)
+        write_to_CSV('/home/pi/Schreibtisch/YoMoPie/firmware/measurements_exp3.csv',sample)
+        a = b
+        print(sample)
+        duration = time.time() - b
+        if(yomo.sample_intervall-duration)>0:
+            time.sleep(yomo.sample_intervall-duration)

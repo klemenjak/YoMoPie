@@ -194,8 +194,8 @@ class YoMoPie:
     	vrms = self.get_vrms()[1]*self.vrms_factor
     	irms = self.get_irms()[1]*self.irms_factor
     	if self.debug:
-    		print("Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var" % (aenergy, appenergy, renergy))
-    		print("VRMS: %f IRMS: %f" %(vrms,irms))
+    		print"Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var" % (aenergy, appenergy, renergy)
+    		print"VRMS: %f IRMS: %f" %(vrms,irms)
     	sample = []
     	sample.append(time.time())
     	sample.append(aenergy)

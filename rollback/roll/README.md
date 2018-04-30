@@ -1,50 +1,32 @@
-# A User-Oriented Energy Monitor to Enhance Energy Efficiency in Households
+YoMoPie Github Readme
 
-The YoMo project aims to empower people using low-cost open-hardware energy monitor.
+# Welcome to YoMoPie !
 
-With YoMoPie, we provide a user-oriented energy monitor based on the Raspberry Pi platform that aims to enable intelligent energy services in households.
+The YoMo project aims to empower people using low-cost open hardware smart meters in their household.
+With YoMoPie, we provide a Smart Metering extension board for Raspberry Pi. YomoPie comes with a Python library that allows users to easily control and apply this special Smart Metering board.
 
-The introduced energy monitor measures active as well as apparent power, stores data locally, and integrates an easy to use Python library. Furthermore, the presented energy monitor enables the execution of user-designed services to enhance energy efficiency in buildings and households.
-
-Along with the design, possible applications that could run on top of our system such as residential demand response, immediate user feedback, smart meter data analytics, or energy disaggregation are discussed.
-
-The YoMoPie builds on [the work published in [1]](https://link.springer.com/article/10.1007%2Fs00450-014-0290-8#/page-1). 
-YoMoPie provides the following advancements:
-
-* It doesn't suffer from a data update rate of 1 second
-* It stores data locally
-* It integrates a new measurement IC that allows poly-phase metering
-* It builds on the Raspberry platform
-* The YoMoPie Python package enables easy handling
-
-![](/Images/ypi_blos.JPG)
+The YoMoPie builds [on the work published in [1]](https://link.springer.com/article/10.1007%2Fs00450-014-0290-8#/page-1). The board integrates several sensors such as an energy metering IC, a relay to control connected loads, and an interface for RF communication. In contrast to the original YoMo, the YoMoPie utilises the ADE77554 chip, which supports three-phase metering. Our library is designed in a way to offer single-phase as well as multi-phase metering.
 
 
-|                 | YoMoPie  |
-| ------------- | -----:|
-|Communication|  WiFi, Ethernet, RF |
-|Measurement|  P, Q, S, I, U |
-|Number of connections| 1 or 3 |
-|Integrated relay |  yes |
-|Sampling frequency|  tba. |
-|Data update rate |  tba. |
-|Power calculation|  Hardware |
-|Open-Source|  yes |
-|RaspberryPi-compatible|  yes  |
-|Costs| approx. 50€  |
+|         | YoMo v1           | YoMoPie  |
+| ------------- |:-------------:| -----:|
+|Communication| WiFi | WiFi, Ethernet, RF |
+|Measurement| P,Q,S,I,V,E | P,Q,S,I,V,E |
+|Number of connections| 1 | 3 |
+|Switchable| yes | yes |
+|Sampling frequency| 1Hz | 1 Hz |
+|Power calculation| Hardware | Hardware |
+|Open-Source| yes | yes |
+|Arduino-based| yes   | no  |
+|RaspberryPi-compatible| no | yes  |
+|Costs|€65|  |
 
-Beside a current and a voltage sensor, the board integrates an energy metering chip, the ADE7754. Our library is designed in a way to offer single-phase as well as multi-phase metering.
-
-## Installation
-
-Coming soon!
-
-## Examples of use
+# Examples of use
 
 In order to start using YoMoPie, all the user needs to do is importing the Python library:
 
 ```python
-import YoMoPie as yomopi
+import YoMoPie
 ```
 
 After a successful import, the YoMoPie object can be created and initialised:
@@ -105,7 +87,7 @@ YomoPie requires some additional libraries:
 
 **sys**:
 
-**RPi.GPIO**: In order to allow further extensions of the YoMoPie eco-system, our package integrates the RPi.GPIO. Also, the reset pin is controlled via GPIO.
+**RPi.GPIO**: In order to allow further extensions of the YoMoPie eco system, our package integrates the RPi.GPIO. Also, the reset pin is controlled via GPIO.
 
 ```python
 import time
@@ -186,7 +168,7 @@ def init_yomopie(self):
 
 **Description**: This function sets the number of active phases that will be measured.
 
-**Parameters**:
+**Parameters**: 
 * lines - Number of phases
 
 **Returns**: Nothing.
@@ -262,7 +244,7 @@ def write_8bit(self, register, value):
 
 **Description**: Reads 8 bit of data from the given address.
 
-**Parameters**:
+**Parameters**: 
 * register - 8 bit address of the register (see ADE7754 register table)
 
 **Returns**: the 8 bit of data in the register as decimal
@@ -279,7 +261,7 @@ def read_8bit(self, register):
 
 **Description**: Reads 16 bit of data from the given address.
 
-**Parameters**:
+**Parameters**: 
 * register - 8 bit address of the register (see ADE7754 register table)
 
 **Returns**: the 16 bit of data in the register as decimal
@@ -297,7 +279,7 @@ def read_16bit(self, register):
 
 **Description**: Reads 24 bit of data from the given address.
 
-**Parameters**:
+**Parameters**: 
 * register - 8 bit address of the register (see ADE7754 register table)
 
 **Returns**: the 24 bit of data in the register as decimal
@@ -372,7 +354,7 @@ def get_period(self):
 
 **Description**: Sets the OPMODE. For more information see section OPMODE.
 
-**Parameters**:
+**Parameters**: 
 * value - 8 bit of data representing the OPMODE
 
 **Returns**: Nothing.
@@ -387,7 +369,7 @@ def set_opmode(self, value):
 
 **Description**: Sets the MMODE. For more information see section MMODE.
 
-**Parameters**:
+**Parameters**: 
 * value - 8 bit of data representing the MMODE
 
 **Returns**: Nothing.
@@ -529,7 +511,7 @@ def change_factors(self, apparent_f, vrms_f, irms_f):
 
 **Parameters**: None.
 
-**Returns**: Nothing.
+**Returns**: Nothing.	
 
 ```python
 def reset_factors(self):
@@ -537,7 +519,7 @@ def reset_factors(self):
 	self.vrms_factor = 1
 	self.irms_factor = 1
 	return
-```
+``` 
 
 ### close
 

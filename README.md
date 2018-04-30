@@ -1,4 +1,4 @@
-# A User-Oriented Energy Monitor to Enhance Energy Efficiency in Households
+# Servus!
 
 The YoMo project aims to empower people using low-cost open-hardware energy monitor.
 

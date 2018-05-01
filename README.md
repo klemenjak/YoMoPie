@@ -59,10 +59,10 @@ By setting the *set_lines' variable, the user can switch between single and mult
 yomo.set_lines(1)
 ```
 
-To test the operation, we recommend to call the function *do_n_measurements*. Based on the number of samples and the sampling period, the function will return first measurement values:
+To test the operation, we recommend to call the function *do_n_measurements*. Based on the number of samples and the sampling period, the function will return first measurement values and saves it into the target file:
 
 ```python
-yomo.do_n_measurements(number of samples, sampling period)
+yomo.do_n_measurements(number of samples, sampling period, target file)
 ```
 
 # YoMoPie Python package documentation

@@ -582,23 +582,23 @@ def get_irms(self):
 
 ```python
 def get_sampleperperiod(self, samplerate):
-    	aenergy = self.get_aenergy()[1] *self.active_factor * 3600/samplerate
-    	appenergy = self.get_appenergy()[1] *self.apparent_factor * 3600/samplerate
-    	renergy = math.sqrt(abs(appenergy*appenergy - aenergy*aenergy))
-    	vrms = self.get_vrms()[1]*self.vrms_factor
-    	irms = self.get_irms()[1]*self.irms_factor
-    	if self.debug:
-    		print("Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var" % (aenergy, appenergy, renergy))
-    		print("VRMS: %f IRMS: %f" %(vrms,irms))
-    	sample = []
-    	sample.append(time.time())
-    	sample.append(aenergy)
-    	sample.append(appenergy)
-    	sample.append(renergy)
-    	sample.append(self.get_period()[1])
-    	sample.append(vrms)
-    	sample.append(irms)
-    	return sample
+	aenergy = self.get_aenergy()[1] *self.active_factor * 3600/samplerate
+	appenergy = self.get_appenergy()[1] *self.apparent_factor * 3600/samplerate
+	renergy = math.sqrt(abs(appenergy*appenergy - aenergy*aenergy))
+	vrms = self.get_vrms()[1]*self.vrms_factor
+	irms = self.get_irms()[1]*self.irms_factor
+	if self.debug:
+		print("Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var" % (aenergy, appenergy, renergy))
+		print("VRMS: %f IRMS: %f" %(vrms,irms))
+	sample = []
+	sample.append(time.time())
+	sample.append(aenergy)
+	sample.append(appenergy)
+	sample.append(renergy)
+	sample.append(self.get_period()[1])
+	sample.append(vrms)
+	sample.append(irms)
+	return sample
 ```
 
 ### do_n_measurements
@@ -645,24 +645,24 @@ def do_n_measurements(self, nr_samples, samplerate, file):
 
 ```python
 def do_metering(self, f_sample, file):
-		if (f_sample > max_f_sample):
-			print('Incompatible sampling frequency!')
-			return 1
-		if (file == ''):
-			file = 'smart_meter_output.csv'
-		for i in range(0,86400):
-			sample = []
-			sample.append(time.time())
-			sample.append(i)
-			sample.append(self.get_active_energy())
-			sample.append(self.get_apparent_energy())
-			data_file = open(file,'a')
-			for value in sample:
-				logfile.write("%s; " % value)
-	    	logfile.write("\n")
-			##print(sample)
-	    	time.sleep(1/f_sample);
-		return 0
+	if (f_sample > max_f_sample):
+		print('Incompatible sampling frequency!')
+		return 1
+	if (file == ''):
+		file = 'smart_meter_output.csv'
+	for i in range(0,86400):
+		sample = []
+		sample.append(time.time())
+		sample.append(i)
+		sample.append(self.get_active_energy())
+		sample.append(self.get_apparent_energy())
+		data_file = open(file,'a')
+		for value in sample:
+			logfile.write("%s; " % value)
+		logfile.write("\n")
+		##print(sample)
+		time.sleep(1/f_sample);
+	return 0
 ```
 
 ### change_factors

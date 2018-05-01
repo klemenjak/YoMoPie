@@ -26,10 +26,7 @@ class YoMoPie:
     def __init__(self):
         self.spi=spidev.SpiDev()
         self.init_yomopie()
-        #except Error as err:
-            #print("Unexpected error:", format(err.args))
-         #   return 0
-        #return
+		return
          
     def init_yomopie(self):
         GPIO.setmode(GPIO.BCM)
@@ -68,6 +65,7 @@ class YoMoPie:
 		
 	def chip_reset(self):
 		self.write_8bit(0x0A, 0x40)
+		time.sleep(1);
 		return
 
     def write_8bit(self, register, value):
@@ -170,8 +168,8 @@ class YoMoPie:
     	return 0
     '''
     def get_sample(self):
-    	aenergy = self.get_aenergy()[1] *self.active_factor
-    	appenergy = self.get_appenergy()[1] *self.apparent_factor
+    	aenergy = self.get_aenergy()[1] *self.active_power_LSB
+    	appenergy = self.get_appenergy()[1] *self.apparent_power_LSB
     	renergy = math.sqrt(appenergy*appenergy - aenergy*aenergy)
     	if self.debug:
     		print"Active energy: %f W, Apparent energy: %f VA, Reactive Energy: %f var" % (aenergy, appenergy, renergy)
@@ -188,8 +186,8 @@ class YoMoPie:
 	'''
     
     def get_sampleperperiod(self, samplerate):
-    	aenergy = self.get_aenergy()[1] *self.active_factor * 3600/samplerate
-    	appenergy = self.get_appenergy()[1] *self.apparent_factor * 3600/samplerate
+    	aenergy = self.get_aenergy()[1] *self.active_power_LSB * 3600/samplerate
+    	appenergy = self.get_appenergy()[1] *self.apparent_power_LSB * 3600/samplerate
     	renergy = math.sqrt(abs(appenergy*appenergy - aenergy*aenergy))
     	vrms = self.get_vrms()[1]*self.vrms_factor
     	irms = self.get_irms()[1]*self.irms_factor
@@ -239,20 +237,24 @@ class YoMoPie:
 			for value in sample:
 				logfile.write("%s; " % value)
 	    	logfile.write("\n")
-	    	print(sample)
+	    	##print(sample)
+			time.sleep(1/f_sample);
 		return 0
 '''
-    def change_factors(self, apparent_f, vrms_f, irms_f):
-	self.apparent_factor = apparent_f
+    def change_factors(self, active_f, apparent_f, vrms_f, irms_f):
+	self.active_power_LSB = active_f
+	self.apparent_power_LSB = apparent_f
 	self.vrms_factor = vrms_f
 	self.irms_factor = irms_f
 	return
 		
     def reset_factors(self):
-	self.apparent_factor = 1
-	self.vrms_factor = 1
-	self.irms_factor = 1
+    self.active_power_LSB= 0.000013292
+    self.apparent_power_LSB= 0.00001024
+    self.vrms_factor = 0.000047159
+    self.irms_factor = 0.000010807
 	return
+	
 	#NRF24 communication
 
     def init_nrf24(self):

@@ -21,12 +21,12 @@ class YoMoPie:
     vrms_factor = 0.000047159
     irms_factor = 0.000010807
 
-	#YoMoPie functions
+    #YoMoPie functions
 	
     def __init__(self):
         self.spi=spidev.SpiDev()
         self.init_yomopie()
-		return
+        return
          
     def init_yomopie(self):
         GPIO.setmode(GPIO.BCM)
@@ -40,20 +40,20 @@ class YoMoPie:
         return
 
     def set_lines(self, lines):
-		if (lines != 1) and (lines != 3):
-                    print("Incompatible number of power lines")
-                    return
-		else:
-                    self.active_lines = lines
-                if self.active_lines == 3:
-                    self.write_8bit(0x0D, 0x3F)
-                    self.write_8bit(0x0E, 0x3F)
-                    self.set_measurement_mode(0x70)
-                elif self.active_lines == 1:
-                    self.write_8bit(0x0E, 0x24)
-                    self.set_measurement_mode(0x10)
-                    self.write_8bit(0x0D, 0x24)
-                return
+        if (lines != 1) and (lines != 3):
+            print("Incompatible number of power lines")
+            return
+        else:
+            self.active_lines = lines
+            if self.active_lines == 3:
+                self.write_8bit(0x0D, 0x3F)
+                self.write_8bit(0x0E, 0x3F)
+                self.set_measurement_mode(0x70)
+            elif self.active_lines == 1:
+                self.write_8bit(0x0E, 0x24)
+                self.set_measurement_mode(0x10)
+                self.write_8bit(0x0D, 0x24)
+            return
 
     def enable_board(self):
         GPIO.output(19, GPIO.HIGH)
@@ -63,10 +63,10 @@ class YoMoPie:
         GPIO.output(19, GPIO.LOW)
         return
 		
-	def chip_reset(self):
-		self.write_8bit(0x0A, 0x40)
-		time.sleep(1);
-		return
+    def chip_reset(self):
+        self.write_8bit(0x0A, 0x40)
+        time.sleep(1)
+        return
 
     def write_8bit(self, register, value):
         self.enable_board()
@@ -125,8 +125,8 @@ class YoMoPie:
     	self.write_8bit(0x0B, value)
     	return
     	
-	def close_SPI_connection(self):
-            self.spi.close()
+    def close_SPI_connection(self):
+        self.spi.close()
         return 0
         
     def get_aenergy(self):
@@ -142,30 +142,30 @@ class YoMoPie:
     	return appenergy
     	
     def get_vrms(self):
-    	if self.active_lines == 1:
-    		avrms = self.vrms_factor * [time.time(), self.read_24bit(0x2C)]
-    		return avrms
-    	elif self.active_lines == 3:
-                vrms = []
-                vrms.append(time.time())
-    		vrms.append(self.read_24bit(0x2C))
-    		vrms.append(self.read_24bit(0x2D))
-    		vrms.append(self.read_24bit(0x2E))
-    		return vrms
-    	return 0
-
+        if self.active_lines == 1:
+            avrms = self.vrms_factor * [time.time(), self.read_24bit(0x2C)]
+            return avrms
+        elif self.active_lines == 3:
+            vrms = []
+            vrms.append(time.time())
+            vrms.append(self.read_24bit(0x2C))
+            vrms.append(self.read_24bit(0x2D))
+            vrms.append(self.read_24bit(0x2E))
+            return vrms
+        return 0
+    
     def get_irms(self):
-    	if self.active_lines == 1:
-    		airms = [time.time(), self.read_24bit(0x29)]
-    		return airms
-    	elif self.active_lines == 3:
-                irms = []
-                irms.append(time.time())
-    		irms.append(self.read_24bit(0x29))
-    		irms.append(self.read_24bit(0x2A))
-    		irms.append(self.read_24bit(0x2B))
-    		return vrms
-    	return 0
+        if self.active_lines == 1:
+            airms = [time.time(), self.read_24bit(0x29)]
+            return airms
+        elif self.active_lines == 3:
+            irms = []
+            irms.append(time.time())
+            irms.append(self.read_24bit(0x29))
+            irms.append(self.read_24bit(0x2A))
+            irms.append(self.read_24bit(0x2B))
+            return vrms
+        return 0
     '''
     def get_sample(self):
     	aenergy = self.get_aenergy()[1] *self.active_power_LSB
@@ -213,33 +213,33 @@ class YoMoPie:
             for j in range(0, samplerate):
                 time.sleep(1)
             sample = self.get_sampleperperiod(samplerate)
-	    samples.append(sample)
-	    logfile = open(file, "a")
+            samples.append(sample)
+            logfile = open(file, "a")
             for value in sample:
-		logfile.write("%s; " % value)
-	    logfile.write("\n")
+                logfile.write("%s; " % value)
+            logfile.write("\n")
             logfile.close()
         return samples
 
-	def do_metering(self, f_sample, file):
-		if (f_sample > max_f_sample):
-			print('Incompatible sampling frequency!')
-			return 1
-		if (file == ''):
-			file = 'smart_meter_output.csv'
-		for i in range(0,86400):
-			sample = []
-			sample.append(time.time())
-			sample.append(i)
-			sample.append(self.get_active_energy())
-			sample.append(self.get_apparent_energy())
-			data_file = open(file,'a')
-			for value in sample:
-				logfile.write("%s; " % value)
-	    	logfile.write("\n")
-	    	##print(sample)
-			time.sleep(1/f_sample);
-		return 0
+    def do_metering(self, f_sample, file):
+        if (f_sample > max_f_sample):
+            print('Incompatible sampling frequency!')
+            return 1
+        if (file == ''):
+            file = 'smart_meter_output.csv'
+        for i in range(0,86400):
+            sample = []
+            sample.append(time.time())
+            sample.append(i)
+            sample.append(self.get_active_energy())
+            sample.append(self.get_apparent_energy())
+            data_file = open(file,'a')
+            for value in sample:
+                logfile.write("%s; " % value)
+            logfile.write("\n")
+	    ##print(sample)
+            time.sleep(1/f_sample);
+        return 0
 '''
     def change_factors(self, active_f, apparent_f, vrms_f, irms_f):
 	self.active_power_LSB = active_f

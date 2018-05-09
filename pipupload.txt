@@ -1,0 +1,13 @@
+#creating a Source Distribution
+python setup.py sdist
+
+#create a wheel
+pip install wheel
+python setup.py bdist_wheel
+
+#upload files
+twine upload dist/*
+
+#check if uploaded
+https://pypi.org/project/<sampleproject> where sampleproject is the name of your project 
+

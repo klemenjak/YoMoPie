@@ -2,8 +2,8 @@ import time
 import math
 import spidev
 import sys
-import RPi.GPIO as GPIO
 from lib_nrf24 import NRF24
+import RPi.GPIO as GPIO
 
 class YoMoPie:
     read = 0b00111111

@@ -18,7 +18,7 @@ time.sleep(1)
 
 yomo.sample_intervall = 0.1
 a = time.time()
-write_to_CSV('meas_20_6_2018/fancy_10Hz.csv','apparent apparent active ctime t')
+write_to_CSV('meas_20_6_2018/final_fancy_10Hz.csv','apparent apparent active ctime t')
 while(1):
     sample = []
     b = time.time()
@@ -30,7 +30,7 @@ while(1):
     sample.append(yomo.active_power_LSB * yomo.read_24bit(0x02) *  3600/time_diff)
     sample.append(time.ctime())
     sample.append(b)
-    write_to_CSV('meas_20_6_2018/fancy_10Hz.csv',sample)
+    write_to_CSV('meas_20_6_2018/final_fancy_10Hz.csv',sample)
     a = b
     energy_old = energy
     duration = time.time() - b    

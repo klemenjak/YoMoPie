@@ -8,19 +8,19 @@ The introduced energy monitor measures active as well as apparent power, stores 
 
 Along with the design, possible applications that could run on top of our system such as residential demand response, immediate user feedback, smart meter data analytics, or energy disaggregation are discussed.
 
-The YoMoPie builds on [the work published in [1]](https://link.springer.com/article/10.1007%2Fs00450-014-0290-8#/page-1).
+<!--- YoMoPie builds on [the work published in [1]](https://link.springer.com/article/10.1007%2Fs00450-014-0290-8#/page-1).
 YoMoPie provides the following advancements:
 
 * It doesn't suffer from a data update rate of 1 second
 * It stores data locally
 * It integrates a new measurement IC that allows poly-phase metering
 * It builds on the Raspberry platform
-* The YoMoPie Python package enables easy handling
+* The YoMoPie Python package enables easy handling -->
 
 
 ## Research Paper related to YomoPie
 
-in case you use PCB, code, or material for research purposed, we kindly ask you to cite our paper:
+In case you use PCB design, code, or material for research purposes, we kindly ask you to cite our paper:
 
 * *Title*: YoMoPie: A User-Oriented Energy Monitor to Enhance Energy Efficiency in Households
 * *Authors*: Mr. Christoph Klemenjak, Mr. Stefan Jost and Dr. Wilfried Elmenreich
@@ -94,7 +94,7 @@ Active power, apparent power, current, and voltage samples can be read with comm
 [t, S] = yp.get_apparent_energy()
 ```
 In the same vein, users can activate continuous data logging or perform a fixed amount of subsequent measurements:
-```Python
+```python
 yp.do_metering()
 yp.do_n_measurements(quantity, rate, file)
 ```

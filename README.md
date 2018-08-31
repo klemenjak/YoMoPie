@@ -26,8 +26,7 @@ in case you use PCB, code, or material for research purposed, we kindly ask you 
 * *Authors*: Mr. Christoph Klemenjak, Mr. Stefan Jost and Dr. Wilfried Elmenreich
 * *Conference*: 2018 IEEE Conference on Technologies for Sustainability (SusTech)
 
-'''
-Bibtex citation:
+```
 @INPROCEEDINGS{klemenjak2018yomopie,
 author={C. Klemenjak and S. Jost and W. Elmenreich},
 booktitle={2018 IEEE Conference on Technologies for Sustainability (SusTech)},
@@ -40,7 +39,7 @@ keywords={},
 doi={},
 ISSN={},
 month={Nov}}
-'''
+```
 
 ![](/Images/ypi_blos.JPG)
 
@@ -64,9 +63,9 @@ Beside a current and a voltage sensor, the board integrates an energy metering c
 
 The YoMoPie Python package is available on Python Package Index (PyPI), a repository of software for the Python programming language, and can be installed by issuing one command:
 
-'''python
+```python
 pip3 install YoMoPie
-'''
+```
 Additionally, the entire source code and a manual can be obtained from our YoMoPie Github repository.
 
 ## Examples of use
@@ -88,23 +87,23 @@ yomo.do_n_measurements(number of samples, sampling period, target file)
 ```
 
 Active power, apparent power, current, and voltage samples can be read with commands such as:
-'''Python
+```python
 [t, I] = yp.get_irms()
 [t, U] = yp.get_vrms()
 [t, P] = yp.get_active_energy()
 [t, S] = yp.get_apparent_energy()
-'''
+```
 In the same vein, users can activate continuous data logging or perform a fixed amount of subsequent measurements:
-'''Python
+```Python
 yp.do_metering()
 yp.do_n_measurements(quantity, rate, file)
-'''
+```
 
 The operational mode (OPMODE) register defines the general configuration of the integrated measurement chip ADE7754. By writing to this register, A/D converters can be turned on/off, sleep mode can be activated, or a software chip reset can be triggered. For further information, we refer to the datasheet of the measurement chip.
 
-'''Python
+```python
 yp.set_operational_mode(OPMODE)
-'''
+```
 
 
 

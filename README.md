@@ -8,7 +8,7 @@ The introduced energy monitor measures active as well as apparent power, stores 
 
 Along with the design, possible applications that could run on top of our system such as residential demand response, immediate user feedback, smart meter data analytics, or energy disaggregation are discussed.
 
-The YoMoPie builds on [the work published in [1]](https://link.springer.com/article/10.1007%2Fs00450-014-0290-8#/page-1). 
+The YoMoPie builds on [the work published in [1]](https://link.springer.com/article/10.1007%2Fs00450-014-0290-8#/page-1).
 YoMoPie provides the following advancements:
 
 * It doesn't suffer from a data update rate of 1 second
@@ -16,6 +16,34 @@ YoMoPie provides the following advancements:
 * It integrates a new measurement IC that allows poly-phase metering
 * It builds on the Raspberry platform
 * The YoMoPie Python package enables easy handling
+
+
+## Research Paper related to YomoPie
+
+in case you use PCB, code, or material for research purposed, we kindly ask you to cite our paper:
+
+* Title:
+* Authors:
+* Conference:
+
+* Title: YoMoPie: A User-Oriented Energy Monitor to Enhance Energy Efficiency in Households
+* Authors: Mr. Christoph Klemenjak, Mr. Stefan Jost and Dr. Wilfried Elmenreich
+* Conference: 2018 IEEE Conference on Technologies for Sustainability (SusTech)
+
+'''
+@INPROCEEDINGS{klemenjak2018yomopie,
+author={C. Klemenjak and S. Jost and W. Elmenreich},
+booktitle={2018 IEEE Conference on Technologies for Sustainability (SusTech)},
+title={YoMoPie: A User-Oriented Energy Monitor to Enhance Energy Efficiency in Households},
+year={2018},
+volume={},
+number={},
+pages={},
+keywords={},
+doi={},
+ISSN={},
+month={Nov},}
+'''
 
 ![](/Images/ypi_blos.JPG)
 
@@ -37,33 +65,51 @@ Beside a current and a voltage sensor, the board integrates an energy metering c
 
 ## Installation
 
-Coming soon!
+The YoMoPie Python package is available on Python Package Index (PyPI), a repository of software for the Python programming language, and can be installed by issuing one command:
+
+'''python
+pip3 install YoMoPie
+'''
+Additionally, the entire source code and a manual can be obtained from our YoMoPie Github repository.
 
 ## Examples of use
 
-In order to start using YoMoPie, all the user needs to do is importing the Python library:
-
+After a successful installation process, the YoMoPie package is available system-wide and can be accessed by a simple import command:
 ```python
-import YoMoPie as yomopi
+import YoMoPie as yomopie
+yp = yomopie.YoMoPie()
 ```
 
-After a successful import, the YoMoPie object can be created and initialised:
-
-```python
-yomo = yomopi.YoMoPie()
-```
-
-By setting the *set_lines' variable, the user can switch between single and multi-phase metering mode:
-
+During initialisation, the number of line conductors has to be set (single or polyphase metering):
 ```python
 yomo.set_lines(1)
 ```
 
 To test the operation, we recommend to call the function *do_n_measurements*. Based on the number of samples and the sampling period, the function will return first measurement values and saves it into the target file:
-
 ```python
 yomo.do_n_measurements(number of samples, sampling period, target file)
 ```
+
+Active power, apparent power, current, and voltage samples can be read with commands such as:
+'''Python
+[t, I] = yp.get_irms()
+[t, U] = yp.get_vrms()
+[t, P] = yp.get_active_energy()
+[t, S] = yp.get_apparent_energy()
+'''
+In the same vein, users can activate continuous data logging or perform a fixed amount of subsequent measurements:
+'''Python
+yp.do_metering()
+yp.do_n_measurements(quantity, rate, file)
+'''
+
+The operational mode (OPMODE) register defines the general configuration of the integrated measurement chip ADE7754. By writing to this register, A/D converters can be turned on/off, sleep mode can be activated, or a software chip reset can be triggered. For further information, we refer to the datasheet of the measurement chip.
+
+'''Python
+yp.set_operational_mode(OPMODE)
+'''
+
+
 
 # YoMoPie Python package documentation
 **[Imports](#imports)**<br>
@@ -149,7 +195,7 @@ debug = 1
 
 sample_intervall = 1
 max_f_sample = 10
-   
+
 active_power_LSB= 0.000013292
 apparent_power_LSB= 0.00001024
 vrms_factor = 0.000047159
@@ -481,7 +527,7 @@ def get_aenergy(self):
 
 ```python
 def get_active_energy(self):
-	aenergy =  [time.time(), self.active_power_LSB * self.read_24bit(0x02) *  3600/self.sample_intervall] 
+	aenergy =  [time.time(), self.active_power_LSB * self.read_24bit(0x02) *  3600/self.sample_intervall]
 	return aenergy
 ```
 ### get_apparent_energy
@@ -575,7 +621,7 @@ def get_irms(self):
 **Description**: Reads multiple register and returns the values adjusted to the sampling frequency. This function will be used in the do_n_measurements
  function.
 
-**Parameters**: 
+**Parameters**:
 * samplerate - the actual samplerate
 
 **Returns**: A list of 7 elements [timestamp, active energy, apparent energy, reactive energy, period, VRMS, IRMS]
@@ -736,18 +782,18 @@ def init_nrf24(self):
 
 **Description**: Sends a message via the RF communication.
 
-**Parameters**: 
+**Parameters**:
 * command - the message that will be written via RF
 
 **Returns**: Nothing.
 
 ```python
-def write_nrf24(self, command):	
+def write_nrf24(self, command):
 	message = []
 	message = list(command)
 	self.radio.write(message)
 	print("Send: {}".format(message))
-		
+
 	if self.radio.isAckPayloadAvailable():
 		pl_buffer = []
 		self.radio.read(pl_buffer, self.radio.getDynamicPayloadSize())
@@ -778,7 +824,7 @@ def read_nrf24(self):
 		time.sleep(1/100)
 	receivedMessage = []
 	self.radio.read(receivedMessage, self.radio.getDynamicPayloadSize())
-		
+
 	print("Translating the receivedMessage to unicode chars...")
 	string = ""
 	for n in receivedMessage:

@@ -27,11 +27,11 @@ in case you use PCB, code, or material for research purposed, we kindly ask you 
 * *Conference*: 2018 IEEE Conference on Technologies for Sustainability (SusTech)
 
 '''
-
+Bibtex citation:
 @INPROCEEDINGS{klemenjak2018yomopie,
 author={C. Klemenjak and S. Jost and W. Elmenreich},
 booktitle={2018 IEEE Conference on Technologies for Sustainability (SusTech)},
-title={YoMoPie: A User-Oriented Energy Monitor to Enhance Energy Efficiency in Households},
+title={Yo{M}o{P}ie: {A} User-Oriented Energy Monitor to Enhance Energy Efficiency in Households},
 year={2018},
 volume={},
 number={},
@@ -40,7 +40,6 @@ keywords={},
 doi={},
 ISSN={},
 month={Nov}}
-
 '''
 
 ![](/Images/ypi_blos.JPG)

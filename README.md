@@ -26,7 +26,8 @@ in case you use PCB, code, or material for research purposed, we kindly ask you 
 * *Authors*: Mr. Christoph Klemenjak, Mr. Stefan Jost and Dr. Wilfried Elmenreich
 * *Conference*: 2018 IEEE Conference on Technologies for Sustainability (SusTech)
 
-'''bibtex
+'''
+
 @INPROCEEDINGS{klemenjak2018yomopie,
 author={C. Klemenjak and S. Jost and W. Elmenreich},
 booktitle={2018 IEEE Conference on Technologies for Sustainability (SusTech)},
@@ -38,7 +39,8 @@ pages={},
 keywords={},
 doi={},
 ISSN={},
-month={Nov},}
+month={Nov}}
+
 '''
 
 ![](/Images/ypi_blos.JPG)

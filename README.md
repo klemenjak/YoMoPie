@@ -1,12 +1,7 @@
 # Servus!
 
-The YoMo project aims to empower people using low-cost open-hardware energy monitor.
-
-With YoMoPie, we provide a user-oriented energy monitor based on the Raspberry Pi platform that aims to enable intelligent energy services in households.
-
-The introduced energy monitor measures active as well as apparent power, stores data locally, and integrates an easy to use Python library. Furthermore, the presented energy monitor enables the execution of user-designed services to enhance energy efficiency in buildings and households.
-
-Along with the design, possible applications that could run on top of our system such as residential demand response, immediate user feedback, smart meter data analytics, or energy disaggregation are discussed.
+Computational methods for the enhancement of energy efficiency rely on a measurement process with sufficient accuracy and number of measurements. Networked energy meters, energy monitors, serve as a vital link between the energy consumption of households and key insights that reveal strategies to achieve significant energy savings.
+With YoMoPie, we propose a user-oriented energy monitor for the Raspberry Pi platform that aims to enable intelligent energy services in households. YoMoPie measures active as well as apparent power, stores data locally, and integrates a user-friendly Python library. Furthermore, the presented energy monitor allows users to run self-designed services in their home to enhance energy efficiency. Potential services are (but not limited to) residential demand response, immediate user feedback, smart meter data analytics, or energy disaggregation.
 
 <!--- YoMoPie builds on [the work published in [1]](https://link.springer.com/article/10.1007%2Fs00450-014-0290-8#/page-1).
 YoMoPie provides the following advancements:
@@ -18,14 +13,15 @@ YoMoPie provides the following advancements:
 * The YoMoPie Python package enables easy handling -->
 
 
-## Research Paper related to YomoPie
+## Research Paper on YomoPie
 
-In case you use PCB design, code, or material for research purposes, we kindly ask you to cite our paper:
+All design files and pieces of software are available free of charge. However, in case you use the PCB design, code, or other material for research purposes, we kindly ask you to cite our peer-reviewed research paper:
 
 * *Title*: YoMoPie: A User-Oriented Energy Monitor to Enhance Energy Efficiency in Households
 * *Authors*: Mr. Christoph Klemenjak, Mr. Stefan Jost and Dr. Wilfried Elmenreich
 * *Conference*: 2018 IEEE Conference on Technologies for Sustainability (SusTech)
 
+Recommended Citation:
 ```
 @INPROCEEDINGS{klemenjak2018yomopie,
 author={C. Klemenjak and S. Jost and W. Elmenreich},
